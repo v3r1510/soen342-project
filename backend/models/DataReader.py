@@ -1,5 +1,5 @@
 import pandas as pd
-from Connection import Connection
+from .Connection import Connection
 
 class DataReader:
 

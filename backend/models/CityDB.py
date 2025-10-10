@@ -1,25 +1,25 @@
-from City import City
+from .City import City
 
 cities = []
 
 class CityDB:
     @staticmethod
-    def add_city(self, city_name):
+    def add_city(city_name):
         temp_city = City(city_name)
-        if self.search_city(temp_city):
+        if CityDB.search_city(temp_city):
             print("City already exists")
             return False
         else:
             cities.append(temp_city)
             return True
     @staticmethod
-    def search_city(self, city):
+    def search_city(city):
         if not isinstance(city, City):
             city = City(city)
 
         return city in cities
     @staticmethod
-    def find_city(self, city):
+    def find_city(city):
         if not isinstance(city, City):
             city = City(city)
 
@@ -27,5 +27,3 @@ class CityDB:
             if c == city:
                 return c
         return None
-
-    pass

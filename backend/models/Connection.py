@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
-from CityDB import CityDB
-from TrainDB import TrainDb
+from .CityDB import CityDB
+from .TrainDB import TrainDB
 
 
 class Connection:
@@ -65,7 +65,7 @@ class Connection:
 
     def compare_arrival_time(self, other):
         if not isinstance(other, Connection):
-            return Flase
+            return False
         return self.arrival_time - other.arrival_time
 
     def compare_trip_time(self, other):
