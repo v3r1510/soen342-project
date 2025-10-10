@@ -17,21 +17,18 @@ class Connection:
         self.second_class_rate = second_class_rate
         self.trip_time = self.calulate_trip_time()
 
-    # calculates the trip time in minutes
     def calulate_trip_time(self):
         def parse_time(time_str):
-            # Check if next day indicator exists
             next_day = False
             if "(+1d)" in time_str:
                 next_day = True
                 time_str = time_str.replace("(+1d)", "").strip()
 
-            # Try different formats
             formats = [
-                "%H:%M:%S",  # 24-hour with seconds: 19:52:00
-                "%H:%M",  # 24-hour without seconds: 12:05
-                "%I:%M:%S %p",  # 12-hour with seconds: 7:52:00 PM
-                "%I:%M %p",  # 12-hour without seconds: 7:52 PM
+                "%H:%M:%S",
+                "%H:%M",
+                "%I:%M:%S %p",
+                "%I:%M %p",
             ]
             for fmt in formats:
                 try:
@@ -57,13 +54,13 @@ class Connection:
 
     def __eq__(self, other):
         if not isinstance(other, Connection):
-            return Flase
+            return False
 
-        return self.route_id == other.route_id and self.departure_city == other.departure_city and self.arrival_city == other.arrival_city and self.departure_time == other.departure_time and self.arrival_time == other.arrival_time and self.train_type == other.train_type and self.days_of_operation == other.days_of_operation, self.first_class_rate == other.first_class_rate and self.second_class_rate == other.second_class_rate, self.trip_time == other.trip_time
+        return self.route_id == other.route_id and self.departure_city == other.departure_city and self.arrival_city == other.arrival_city and self.departure_time == other.departure_time and self.arrival_time == other.arrival_time and self.train_type == other.train_type and self.days_of_operation == other.days_of_operation, self.first_class_rate == other.first_class_rate and self.second_class_rate == other.second_class_rate and self.trip_time == other.trip_time
 
     def compare_departure_time(self, other):
         if not isinstance(other, Connection):
-            return Flase
+            return False
         return self.departure_time - other.departure_time
 
     def compare_arrival_time(self, other):

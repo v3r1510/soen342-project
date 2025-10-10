@@ -4,6 +4,7 @@ connections = []
 
 
 class ConnectionDB:
+    @staticmethod
     def add_connection(self, connection):
         if not isinstance(connection, Connection):
             return False
@@ -14,6 +15,7 @@ class ConnectionDB:
             else:
                 return False
 
+    @staticmethod
     def find_departure_time(self, connection):
         same_departure = []
         for i in connections:
@@ -22,6 +24,7 @@ class ConnectionDB:
 
         return same_departure
 
+    @staticmethod
     def find_arrival_time(self, connection):
         same_arrival = []
         for i in connections:
@@ -30,6 +33,7 @@ class ConnectionDB:
 
         return same_arrival
 
+    @staticmethod
     def find_departure_city(self, connection):
         same_departure = []
         for i in connections:
@@ -37,6 +41,7 @@ class ConnectionDB:
                 same_departure.append(i)
         return same_departure
 
+    @staticmethod
     def find_arrival_city(self, connection):
         same_arrival = []
         for i in connections:
@@ -44,6 +49,7 @@ class ConnectionDB:
                 same_arrival.append(i)
         return same_arrival
 
+    @staticmethod
     def find_trip_time(self, connection):
         same_trip_time = []
         for i in connections:
@@ -51,6 +57,7 @@ class ConnectionDB:
                 same_trip_time.append(i)
         return same_trip_time
 
+    @staticmethod
     def find_train_type(self, connection):
         same_train_type = []
         for i in connections:
@@ -58,6 +65,7 @@ class ConnectionDB:
                 same_train_type.append(i)
         return same_train_type
 
+    @staticmethod
     def find_day_of_operation(self, connection):
         same_day_of_operation = []
         for i in connections:
@@ -65,6 +73,7 @@ class ConnectionDB:
                 same_day_of_operation.append(i)
         return same_day_of_operation
 
+    @staticmethod
     def find_first_class_fare(self, connection):
         same_first_class_fare = []
         for i in connections:
@@ -72,6 +81,7 @@ class ConnectionDB:
                 same_first_class_fare.append(i)
         return same_first_class_fare
 
+    @staticmethod
     def find_second_class_fare(self, connection):
         same_second_class_fare = []
         for i in connections:

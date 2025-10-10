@@ -3,6 +3,7 @@ from City import City
 cities = []
 
 class CityDB:
+    @staticmethod
     def add_city(self, city_name):
         temp_city = City(city_name)
         if self.search_city(temp_city):
@@ -11,20 +12,20 @@ class CityDB:
         else:
             cities.append(temp_city)
             return True
-
+    @staticmethod
     def search_city(self, city):
         if not isinstance(city, City):
             city = City(city)
 
         return city in cities
-
+    @staticmethod
     def find_city(self, city):
         if not isinstance(city, City):
             city = City(city)
 
-        if city in cities:
-            return city
-        else:
-            return None
+        for c in cities:
+            if c == city:
+                return c
+        return None
 
     pass
