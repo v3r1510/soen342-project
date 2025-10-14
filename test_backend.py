@@ -21,14 +21,14 @@ def test_backend():
     CityDB.add_city("Paris")
     CityDB.add_city("London")
     CityDB.add_city("Berlin")
-    print(f"   ✅ Added {len(cities)} cities: {[city.name for city in cities]}")
+    print(f"   ✅ Added {len(cities)} cities: {[city.city_name for city in cities]}")
     
     # Test 2: Add test train types
     print("\n2. Adding test train types...")
     TrainDB.add_train("TGV")
     TrainDB.add_train("Eurostar")
     TrainDB.add_train("ICE")
-    print(f"   ✅ Added {len(trains)} train types: {[train.name for train in trains]}")
+    print(f"   ✅ Added {len(trains)} train types: {[train.train_type for train in trains]}")
     
     # Test 3: Create test connections
     print("\n3. Creating test connections...")
@@ -64,7 +64,7 @@ def test_backend():
     except Exception as e:
         print(f"   ❌ Error creating connections: {e}")
         return False
-    
+
     # Test 4: Test Console search functionality
     print("\n4. Testing Console search...")
     try:
@@ -75,9 +75,9 @@ def test_backend():
                 results = []
                 for connection in connections:
                     match = True
-                    if kwargs.get('departure_city') and connection.departure_city.name.lower() != kwargs['departure_city'].lower():
+                    if kwargs.get('departure_city') and connection.departure_city.city_name.lower() != kwargs['departure_city'].lower():
                         match = False
-                    if kwargs.get('arrival_city') and connection.arrival_city.name.lower() != kwargs['arrival_city'].lower():
+                    if kwargs.get('arrival_city') and connection.arrival_city.city_name.lower() != kwargs['arrival_city'].lower():
                         match = False
                     if match:
                         results.append(connection)

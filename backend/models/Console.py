@@ -49,15 +49,15 @@ class Console:
         for connection in connections:
             match = True
             
-            if departure_city and connection.departure_city.name.lower() != departure_city.lower():
+            if departure_city and connection.departure_city.city_name.lower() != departure_city.lower():
                 match = False
-            if arrival_city and connection.arrival_city.name.lower() != arrival_city.lower():
+            if arrival_city and connection.arrival_city.city_name.lower() != arrival_city.lower():
                 match = False
             if departure_time and connection.departure_time != departure_time:
                 match = False
             if arrival_time and connection.arrival_time != arrival_time:
                 match = False
-            if train_type and connection.train_type.name.lower() != train_type.lower():
+            if train_type and connection.train_type.train_type.lower() != train_type.lower():
                 match = False
             if days_of_operation and connection.days_of_operation != days_of_operation:
                 match = False
