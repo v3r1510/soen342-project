@@ -33,8 +33,8 @@ class Console:
                 arrival_time=row['Arrival Time'],
                 train_type=row['Train Type'],
                 days_of_operation=row['Days of Operation'],
-                first_class_rate=row['First Class Rate'],
-                second_class_rate=row['Second Class Rate']
+                first_class_rate=row['First Class ticket rate (in euro)'],
+                second_class_rate=row['Second Class ticket rate (in euro)']
             )
             ConnectionDB.add_connection(connection)
 

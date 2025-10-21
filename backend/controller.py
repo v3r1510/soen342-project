@@ -4,7 +4,7 @@ from models.Console import Console
 bp = Blueprint('controller', __name__, url_prefix='/')
 
 # Initialize console with data file (you'll need to add your CSV file)
-console = None
+console = Console("eu_rail_network.csv")
 
 def initialize_console(filename):
     global console
