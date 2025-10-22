@@ -75,6 +75,27 @@ rail-network-system/
 ├── requirements.txt    # *TBD*
 └── test_backend.py     # *TBD*
 ```
+## Contributing
+1. Create an issue for the feature/bug
+2. Create a new branch from `main`
+```bash
+git checkout -b feature/issue-number-description
+```
+
+3. Make your changes, stage them and commit
+```bash
+git add .
+git commit -m "Add feature X, fixes #123"
+```
+
+4. Push to GitHub
+```bash
+git push origin feature/issue-number-description
+```
+
+5. Create a Pull Request
+6. Wait for code review and approval
+7. Merge after approval
 
 ## Team
 | Name               | Role                   | GitHub             | StudentID |
