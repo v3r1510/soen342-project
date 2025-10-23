@@ -6,6 +6,9 @@ from .TrainDB import TrainDB
 from .CityDB import cities  # Import the global lists
 from .TrainDB import trains
 from .ConnectionDB import connections
+from .ClientDB import ClientDB, clients
+from .TripDB import TripDB, trips
+from .Trip import Trip
 
 class Console:
     def __init__(self, filename):
@@ -86,3 +89,63 @@ class Console:
     def routes_to_json(self, routes_list):
         """Convert list of routes to JSON format for frontend"""
         return [route.to_json() for route in routes_list]
+
+    def book_trip(self, travelers, connection):
+        """
+        Book a trip for one or more travelers
+        
+        Parameters:
+        - travelers: List of dictionaries with 'name', 'age', 'client_id'
+        - connection: Connection object (not string!)
+        
+        Returns:
+        - Trip object with all reservations created
+        """
+        if not isinstance(connection, Connection):
+            raise TypeError("connection must be a Connection object")
+        
+        if not travelers or len(travelers) == 0:
+            raise ValueError("At least one traveler is required")
+        
+        # Create the trip for this connection
+        trip = Trip(connection)
+        
+        # Add each traveler as a reservation
+        for traveler_data in travelers:
+            # Get or create client (maintains client records)
+            client = ClientDB.add_client(
+                name=traveler_data['name'],
+                age=traveler_data['age'],
+                client_id=traveler_data['client_id']
+            )
+            
+            # Add reservation for this client
+            try:
+                trip.add_reservation(client)
+            except ValueError as e:
+                # Client already has a reservation for this connection
+                raise ValueError(f"Error booking trip: {str(e)}")
+        
+        # Save trip to database
+        TripDB.add_trip(trip)
+        
+        return trip
+
+    def get_all_clients(self):
+        """Get all clients who have made reservations"""
+        return clients
+
+    def get_all_trips(self):
+        """Get all booked trips"""
+        return trips
+
+    def find_trip_by_id(self, trip_id):
+        """Find a specific trip by ID"""
+        return TripDB.find_trip(trip_id)
+
+    def find_client_trips(self, client_id):
+        """Find all trips for a specific client"""
+        client = ClientDB.find_client(client_id)
+        if not client:
+            return []
+        return TripDB.find_trips_by_client(client)
