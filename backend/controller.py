@@ -52,12 +52,17 @@ def search_routes():
         print(f"Found {len(results)} matching routes")
         # Convert to JSON format
         routes_json = console.routes_to_json(results)
-        
+        # print(routes_json[0])
+        print(jsonify({
+            "success": True,
+            "routes": routes_json,
+            "count": len(routes_json)
+        }))
         return jsonify({
             "success": True,
             "routes": routes_json,
             "count": len(routes_json)
-        })
+        }), 200
         
     except Exception as e:
         return jsonify({"error (this is a big error)": str(e)}), 500

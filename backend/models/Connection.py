@@ -48,9 +48,9 @@ class Connection:
         return int((arrival - departure).total_seconds() / 60)
 
     def to_json(self):
-        return {"departure_city": self.departure_city, "arrival_city": self.arrival_city,
+        return {"departure_city": self.departure_city.to_json, "arrival_city": self.arrival_city.to_json,
                 "departure_time": self.departure_time, "arrival_time": self.arrival_time,
-                "train_type": self.train_type, "days_of_operation": self.days_of_operation,
+                "train_type": self.train_type.to_json, "days_of_operation": self.days_of_operation,
                 "first_class_rate": self.first_class_rate, "second_class_rate": self.second_class_rate,
                 "trip_time": self.trip_time}
 

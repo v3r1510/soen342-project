@@ -15,5 +15,8 @@ class Train:
 
     def __hash__(self):
         return hash(self.train_type)
-
+    def to_json(self):
+        return {
+            "type": self.train_type,
+        }
     pass

@@ -47,9 +47,11 @@ class Console:
                      arrival_time=None, train_type=None, days_of_operation=None, 
                      first_class_rate=None, second_class_rate=None):
         """Search for routes based on criteria"""
+        print(departure_city)
         results = []
         user = Connection("U001", departure_city, arrival_city, departure_time, arrival_time,train_type, days_of_operation, first_class_rate, second_class_rate)
-    
+        # print((user))
+        # print(user.departure_city)
         if departure_city:
             # departure_cities = ConnectionDB.find_departure_city(user)
             results.append(ConnectionDB.find_departure_city(user))
