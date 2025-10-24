@@ -38,8 +38,3 @@ class TripDB:
                     client_trips.append(trip)
                     break
         return client_trips
-
-    @staticmethod
-    def find_trips_by_connection(connection):
-        """Find all trips for a specific connection"""
-        return [trip for trip in trips if trip.connection == connection]
