@@ -6,6 +6,9 @@ from .TrainDB import TrainDB
 from .CityDB import cities  # Import the global lists
 from .TrainDB import trains
 from .ConnectionDB import connections
+from .ClientDB import ClientDB, clients
+from .TripDB import TripDB, trips
+from .Trip import Trip
 
 class Console:
     def __init__(self, filename):
@@ -46,30 +49,61 @@ class Console:
         """Search for routes based on criteria"""
         results = []
         
-        for connection in connections:
-            match = True
-            
-            if departure_city and connection.departure_city.city_name.lower() != departure_city.lower():
-                match = False
-            if arrival_city and connection.arrival_city.city_name.lower() != arrival_city.lower():
-                match = False
-            if departure_time and connection.departure_time != departure_time:
-                match = False
-            if arrival_time and connection.arrival_time != arrival_time:
-                match = False
-            if train_type and connection.train_type.train_type.lower() != train_type.lower():
-                match = False
-            if days_of_operation and connection.days_of_operation != days_of_operation:
-                match = False
-            if first_class_rate and connection.first_class_rate != first_class_rate:
-                match = False
-            if second_class_rate and connection.second_class_rate != second_class_rate:
-                match = False
-                
-            if match:
-                results.append(connection)
-        
-        return results
+        # for connection in connections:
+        #     match = True
+        #
+        #     if departure_city and connection.departure_city.city_name.lower() != departure_city.lower():
+        #         match = False
+        #     if arrival_city and connection.arrival_city.city_name.lower() != arrival_city.lower():
+        #         match = False
+        #     if departure_time and connection.departure_time != departure_time:
+        #         match = False
+        #     if arrival_time and connection.arrival_time != arrival_time:
+        #         match = False
+        #     if train_type and connection.train_type.train_type.lower() != train_type.lower():
+        #         match = False
+        #     if days_of_operation and connection.days_of_operation != days_of_operation:
+        #         match = False
+        #     if first_class_rate and connection.first_class_rate != first_class_rate:
+        #         match = False
+        #     if second_class_rate and connection.second_class_rate != second_class_rate:
+        #         match = False
+        #
+        #     if match:
+        #         results.append(connection)
+
+        user = Connection(departure_city, arrival_city, departure_time, arrival_time,train_type, days_of_operation, first_class_rate, second_class_rate)
+
+        if departure_city:
+            # departure_cities = ConnectionDB.find_departure_city(user)
+            results.append(ConnectionDB.find_departure_city(departure_city))
+        if arrival_city:
+            # arrival_cities = ConnectionDB.find_arrival_city(user)
+            results.append(ConnectionDB.find_arrival_city(arrival_city))
+        if departure_time:
+            # departure_times = ConnectionDB.find_departure_time(user)
+            results.append(ConnectionDB.find_departure_time(departure_time))
+        if arrival_time:
+            # arrivale_times = ConnectionDB.find_arrival_time(user)
+            results.append(ConnectionDB.find_arrival_time(arrival_time))
+        if train_type:
+            # train_types = ConnectionDB.find_train_type(user)
+            results.append(ConnectionDB.find_train_type(train_type))
+        if days_of_operation:
+            # days_of_operations = ConnectionDB.find_days_of_operation(user)
+            results.append(ConnectionDB.find_days_of_operation(days_of_operation))
+        if first_class_rate:
+            # first_classe_rates = ConnectionDB.find_first_class_rate(user)
+            results.append(ConnectionDB.find_first_class_rate(first_class_rate))
+        if second_class_rate:
+            # second_class_rates = ConnectionDB.find_second_class_rate(user)
+            results.append(ConnectionDB.find_second_class_rate(second_class_rate))
+
+        if not results:
+            return []
+
+        return list(set.intersection(*(set(rlts) for rlts in results)))
+        # return results
 
     def get_all_routes(self):
         """Get all available routes"""
@@ -86,3 +120,63 @@ class Console:
     def routes_to_json(self, routes_list):
         """Convert list of routes to JSON format for frontend"""
         return [route.to_json() for route in routes_list]
+
+    def book_trip(self, travelers, connection):
+        """
+        Book a trip for one or more travelers
+        
+        Parameters:
+        - travelers: List of dictionaries with 'name', 'age', 'client_id'
+        - connection: Connection object (not string!)
+        
+        Returns:
+        - Trip object with all reservations created
+        """
+        if not isinstance(connection, Connection):
+            raise TypeError("connection must be a Connection object")
+        
+        if not travelers or len(travelers) == 0:
+            raise ValueError("At least one traveler is required")
+        
+        # Create the trip for this connection
+        trip = Trip(connection)
+        
+        # Add each traveler as a reservation
+        for traveler_data in travelers:
+            # Get or create client (maintains client records)
+            client = ClientDB.add_client(
+                name=traveler_data['name'],
+                age=traveler_data['age'],
+                client_id=traveler_data['client_id']
+            )
+            
+            # Add reservation for this client
+            try:
+                trip.add_reservation(client)
+            except ValueError as e:
+                # Client already has a reservation for this connection
+                raise ValueError(f"Error booking trip: {str(e)}")
+        
+        # Save trip to database
+        TripDB.add_trip(trip)
+        
+        return trip
+
+    def get_all_clients(self):
+        """Get all clients who have made reservations"""
+        return clients
+
+    def get_all_trips(self):
+        """Get all booked trips"""
+        return trips
+
+    def find_trip_by_id(self, trip_id):
+        """Find a specific trip by ID"""
+        return TripDB.find_trip(trip_id)
+
+    def find_client_trips(self, client_id):
+        """Find all trips for a specific client"""
+        client = ClientDB.find_client(client_id)
+        if not client:
+            return []
+        return TripDB.find_trips_by_client(client)
