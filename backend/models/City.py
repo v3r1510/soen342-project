@@ -1,4 +1,6 @@
 class City:
+    __slots__ = ("city_name",)
+
     def __init__(self, city_name):
         self.city_name = city_name
 
@@ -7,8 +9,10 @@ class City:
 
     def __eq__(self, other):
         if not isinstance(other, City):
-            return False
+            return NotImplemented
         return self.city_name == other.city_name
 
+    def __hash__(self):
+        return hash(self.city_name)
 
     pass

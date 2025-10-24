@@ -49,30 +49,61 @@ class Console:
         """Search for routes based on criteria"""
         results = []
         
-        for connection in connections:
-            match = True
-            
-            if departure_city and connection.departure_city.city_name.lower() != departure_city.lower():
-                match = False
-            if arrival_city and connection.arrival_city.city_name.lower() != arrival_city.lower():
-                match = False
-            if departure_time and connection.departure_time != departure_time:
-                match = False
-            if arrival_time and connection.arrival_time != arrival_time:
-                match = False
-            if train_type and connection.train_type.train_type.lower() != train_type.lower():
-                match = False
-            if days_of_operation and connection.days_of_operation != days_of_operation:
-                match = False
-            if first_class_rate and connection.first_class_rate != first_class_rate:
-                match = False
-            if second_class_rate and connection.second_class_rate != second_class_rate:
-                match = False
-                
-            if match:
-                results.append(connection)
-        
-        return results
+        # for connection in connections:
+        #     match = True
+        #
+        #     if departure_city and connection.departure_city.city_name.lower() != departure_city.lower():
+        #         match = False
+        #     if arrival_city and connection.arrival_city.city_name.lower() != arrival_city.lower():
+        #         match = False
+        #     if departure_time and connection.departure_time != departure_time:
+        #         match = False
+        #     if arrival_time and connection.arrival_time != arrival_time:
+        #         match = False
+        #     if train_type and connection.train_type.train_type.lower() != train_type.lower():
+        #         match = False
+        #     if days_of_operation and connection.days_of_operation != days_of_operation:
+        #         match = False
+        #     if first_class_rate and connection.first_class_rate != first_class_rate:
+        #         match = False
+        #     if second_class_rate and connection.second_class_rate != second_class_rate:
+        #         match = False
+        #
+        #     if match:
+        #         results.append(connection)
+
+        user = Connection(departure_city, arrival_city, departure_time, arrival_time,train_type, days_of_operation, first_class_rate, second_class_rate)
+
+        if departure_city:
+            # departure_cities = ConnectionDB.find_departure_city(user)
+            results.append(ConnectionDB.find_departure_city(departure_city))
+        if arrival_city:
+            # arrival_cities = ConnectionDB.find_arrival_city(user)
+            results.append(ConnectionDB.find_arrival_city(arrival_city))
+        if departure_time:
+            # departure_times = ConnectionDB.find_departure_time(user)
+            results.append(ConnectionDB.find_departure_time(departure_time))
+        if arrival_time:
+            # arrivale_times = ConnectionDB.find_arrival_time(user)
+            results.append(ConnectionDB.find_arrival_time(arrival_time))
+        if train_type:
+            # train_types = ConnectionDB.find_train_type(user)
+            results.append(ConnectionDB.find_train_type(train_type))
+        if days_of_operation:
+            # days_of_operations = ConnectionDB.find_days_of_operation(user)
+            results.append(ConnectionDB.find_days_of_operation(days_of_operation))
+        if first_class_rate:
+            # first_classe_rates = ConnectionDB.find_first_class_rate(user)
+            results.append(ConnectionDB.find_first_class_rate(first_class_rate))
+        if second_class_rate:
+            # second_class_rates = ConnectionDB.find_second_class_rate(user)
+            results.append(ConnectionDB.find_second_class_rate(second_class_rate))
+
+        if not results:
+            return []
+
+        return list(set.intersection(*(set(rlts) for rlts in results)))
+        # return results
 
     def get_all_routes(self):
         """Get all available routes"""

@@ -52,11 +52,27 @@ class Connection:
                 "first_class_rate": self.first_class_rate, "second_class_rate": self.second_class_rate,
                 "trip_time": self.trip_time}
 
+    def _key(self):
+        return (
+            self.route_id,
+            self.departure_city,
+            self.arrival_city,
+            self.departure_time,
+            self.arrival_time,
+            self.train_type,
+            self.days_of_operation,
+            self.first_class_rate,
+            self.second_class_rate,
+            self.trip_time,
+        )
+
     def __eq__(self, other):
         if not isinstance(other, Connection):
-            return False
+            return NotImplemented
+        return self._key() == other._key()
 
-        return self.route_id == other.route_id and self.departure_city == other.departure_city and self.arrival_city == other.arrival_city and self.departure_time == other.departure_time and self.arrival_time == other.arrival_time and self.train_type == other.train_type and self.days_of_operation == other.days_of_operation, self.first_class_rate == other.first_class_rate and self.second_class_rate == other.second_class_rate and self.trip_time == other.trip_time
+    def __hash__(self):
+        return hash(self._key())
 
     def compare_departure_time(self, other):
         if not isinstance(other, Connection):

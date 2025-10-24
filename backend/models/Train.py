@@ -1,5 +1,7 @@
 
 class Train:
+    __slots__ = ("train_type",)
+
     def __init__(self, train_type):
         self.train_type = train_type
 
@@ -8,7 +10,10 @@ class Train:
 
     def __eq__(self, other):
         if not isinstance(other, Train):
-            return False
+            return NotImplemented
         return self.train_type == other.train_type
+
+    def __hash__(self):
+        return hash(self.train_type)
 
     pass
