@@ -31,11 +31,21 @@ This is an academic project for the class SOEN342 - Software Requirements and De
 
 ### Prerequisites
 
-*TBD*
-
+Having virtual environment in python : python -m *venv* venv
+*replace the first venv by the name you want your virtual environment to have* 
+PS never commit the venv to your repo
 ### Installation
 
-*TBD*
+Activate your virtual environment : 
+    venv/Script/activate
+Once the environment is active, install the requirements:
+    pip install -r requirements.txt 
+
+## Start the backend 
+Go to your backend folder: 
+    cd backend
+Start the flask app:
+    flask --run
 
 ## Usage
 ### For Users
@@ -55,9 +65,8 @@ This is an academic project for the class SOEN342 - Software Requirements and De
 ## Project Structure
 ```
 rail-network-system/
-├── .idea/              # *TBD*
-│   ├── *TBD*/
-│   └── *TBD*/
+├── .idea/              # *Auto generated code*
+│  
 ├── software-artifacts/ # Diagrams and Models for each iteration
 │   ├── iteration1/
 │   └── iteration2/
@@ -67,13 +76,13 @@ rail-network-system/
 │     ├── search.css/   # CSS file
 │     └── search.js/    # JavaScript file
 ├── backend/            # Backend code
-│   ├── models/         # *TBD*
-│   └── controllers/    # *TBD*
+│   ├── models/         # *This folder will contain the models, in other words, our objects*
+│   └── controllers/    # *This folder will contain the controllers, it will be the link between the frontend and backend*
 ├── .gitignore
-├── Procfile            # *TBD*
+├── Procfile            # *This is an honcho file that will let the user start both the backend and the frontend simultaneously*
 ├── README.md
-├── requirements.txt    # *TBD*
-└── test_backend.py     # *TBD*
+├── requirements.txt    # *This file contains the required python module to download in your venv, these module are essential to run your code*
+└── test_backend.py     # *backend tests*
 ```
 ## Contributing
 1. Create an issue for the feature/bug
