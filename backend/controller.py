@@ -9,8 +9,9 @@ console = None
 def initialize_console(filename):
     global console
     console = Console(filename)
+initialize_console("eu_rail_network.csv") 
 
-@bp.route('/search', methods=['POST'])
+@bp.route('/search', methods=['POST', 'GET'])
 def search_routes():
     """Search for routes based on criteria from frontend"""
     if not console:
@@ -18,7 +19,6 @@ def search_routes():
     
     try:
         data = request.get_json()
-        
         # Extract search criteria from frontend
         departure_city = data.get('departureCity', '').strip()
         arrival_city = data.get('arrivalCity', '').strip()
@@ -37,6 +37,7 @@ def search_routes():
         train_type = train_type if train_type else None
         days_of_operation = days_of_operation if days_of_operation else None
         
+        
         # Search routes
         results = console.search_routes(
             departure_city=departure_city,
@@ -48,7 +49,7 @@ def search_routes():
             first_class_rate=first_class_rate,
             second_class_rate=second_class_rate
         )
-        
+        print(f"Found {len(results)} matching routes")
         # Convert to JSON format
         routes_json = console.routes_to_json(results)
         
@@ -59,7 +60,7 @@ def search_routes():
         })
         
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error (this is a big error)": str(e)}), 500
 
 @bp.route('/routes', methods=['GET'])
 def get_all_routes():

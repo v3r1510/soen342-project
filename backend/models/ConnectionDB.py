@@ -36,7 +36,11 @@ class ConnectionDB:
     @staticmethod
     def find_departure_city(connection):
         same_departure = []
+        print("this is the connections")
+        print(connections)
         for i in connections:
+            # print("Comparing:", i.departure_city, "with", connection.departure_city)
+            # print("Result:", i.compare_departure_city(connection))
             if i.compare_departure_city(connection):
                 same_departure.append(i)
         return same_departure
