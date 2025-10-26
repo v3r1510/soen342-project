@@ -52,29 +52,21 @@ class Console:
         user = Connection(departure_city, arrival_city, departure_time, arrival_time,train_type, days_of_operation, first_class_rate, second_class_rate)
 
         if departure_city:
-            # departure_cities = ConnectionDB.find_departure_city(user)
             results.append(ConnectionDB.find_departure_city(departure_city))
         if arrival_city:
-            # arrival_cities = ConnectionDB.find_arrival_city(user)
             results.append(ConnectionDB.find_arrival_city(arrival_city))
         if departure_time:
-            # departure_times = ConnectionDB.find_departure_time(user)
             results.append(ConnectionDB.find_departure_time(departure_time))
         if arrival_time:
-            # arrivale_times = ConnectionDB.find_arrival_time(user)
             results.append(ConnectionDB.find_arrival_time(arrival_time))
         if train_type:
-            # train_types = ConnectionDB.find_train_type(user)
             results.append(ConnectionDB.find_train_type(train_type))
         if days_of_operation:
-            # days_of_operations = ConnectionDB.find_days_of_operation(user)
             results.append(ConnectionDB.find_days_of_operation(days_of_operation))
         if first_class_rate:
-            # first_classe_rates = ConnectionDB.find_first_class_rate(user)
             results.append(ConnectionDB.find_first_class_rate(first_class_rate))
         if second_class_rate:
-            # second_class_rates = ConnectionDB.find_second_class_rate(user)
-            results.append(ConnectionDB.find_second_class_rate(second_class_rate))
+            results.append(ConnectionDB.find_second_class_rate(second_class_rate))   
 
         if not results:
             return []
