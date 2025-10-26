@@ -2,7 +2,7 @@ class Client:
     def __init__(self, name, age, client_id):
         self.name = name
         self.age = age
-        self.client_id = client_id  # Generic ID (state-id or passport number)
+        self.client_id = client_id 
 
     def __str__(self):
         return f"{self.name} (ID: {self.client_id})"
