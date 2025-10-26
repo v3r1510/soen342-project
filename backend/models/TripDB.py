@@ -1,6 +1,6 @@
 from .Trip import Trip
 
-trips = []  # Global list to store all trips
+trips = []  #list of all the trips (our db) 
 
 
 class TripDB:
