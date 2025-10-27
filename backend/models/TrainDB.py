@@ -1,5 +1,5 @@
 from .Train import Train
-trains = []
+trains = [] #list of trains (our db) 
 
 class TrainDB:
     @staticmethod
