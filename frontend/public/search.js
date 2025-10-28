@@ -1,18 +1,37 @@
 function sendHttpRequest() {
+    // Get all form fields
     const departureCity = document.getElementById('departureCity').value;
-    // You can add more fields as needed
+    const arrivalCity = document.getElementById('arrivalCity').value;
+    const departureTime = document.getElementById('departureTime').value;
+    const arrivalTime = document.getElementById('arrivalTime').value;
+    const trainType = document.getElementById('trainType').value;
+    const operationDays = document.getElementById('operationDays').value;
+    const firstRate = document.getElementById('firstRate').value;
+    const secondRate = document.getElementById('secondRate').value;
+
+    // Create request body with all parameters
+    const requestBody = {
+        departureCity,
+        arrivalCity,
+        departureTime,
+        arrivalTime,
+        operationDays,
+        firstRate,
+        secondRate,
+        trainType
+    };
+
     fetch('http://127.0.0.1:5000/search', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ departureCity })
+        body: JSON.stringify(requestBody)
     })
     .then(response => response.json())
     .then(data => {
         console.log('Search results:', data);
-        // Optionally display results in the page
-        // document.querySelector('.container').innerHTML = JSON.stringify(data.routes);
+        document.querySelector('.container').innerHTML = JSON.stringify(data.routes);
     })
     .catch(error => {
         console.error('Search failed:', error);
