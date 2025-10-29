@@ -51,12 +51,6 @@ def search_routes():
         print(f"Found {len(results)} matching routes")
         # Convert to JSON format
         routes_json = console.routes_to_json(results)
-        # print(routes_json[0])
-        print(jsonify({
-            "success": True,
-            "routes": routes_json,
-            "count": len(routes_json)
-        }))
         return jsonify({
             "success": True,
             "routes": routes_json,
