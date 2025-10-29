@@ -1,6 +1,6 @@
 from .Connection import Connection
 
-connections = []
+connections = [] #list of connections (our db)
 
 
 class ConnectionDB:

@@ -3,7 +3,7 @@ from .Connection import Connection
 from .ConnectionDB import ConnectionDB
 from .CityDB import CityDB
 from .TrainDB import TrainDB
-from .CityDB import cities  # Import the global lists
+from .CityDB import cities  
 from .TrainDB import trains
 from .ConnectionDB import connections
 from .ClientDB import ClientDB, clients
@@ -81,7 +81,6 @@ class Console:
             return []
 
         return list(set.intersection(*(set(rlts) for rlts in results)))
-        # return results
 
     def get_all_routes(self):
         """Get all available routes"""
@@ -100,16 +99,7 @@ class Console:
         return [route.to_json() for route in routes_list]
 
     def book_trip(self, travelers, connection):
-        """
-        Book a trip for one or more travelers
-        
-        Parameters:
-        - travelers: List of dictionaries with 'name', 'age', 'client_id'
-        - connection: Connection object (not string!)
-        
-        Returns:
-        - Trip object with all reservations created
-        """
+    
         if not isinstance(connection, Connection):
             raise TypeError("connection must be a Connection object")
         
@@ -121,7 +111,7 @@ class Console:
         
         # Add each traveler as a reservation
         for traveler_data in travelers:
-            # Get or create client (maintains client records)
+            # Get or create client
             client = ClientDB.add_client(
                 name=traveler_data['name'],
                 age=traveler_data['age'],

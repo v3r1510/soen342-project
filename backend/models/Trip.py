@@ -4,9 +4,9 @@ from .Reservation import Reservation
 
 class Trip:
     def __init__(self, connection):
-        self.trip_id = str(uuid.uuid4())[:8].upper()  # Unique alphanumeric ID (8 chars)
-        self.connection = connection  # Connection object - same for all reservations in trip
-        self.reservations = []  # List of Reservation objects
+        self.trip_id = str(uuid.uuid4())[:8].upper()  
+        self.connection = connection 
+        self.reservations = []  
 
     def add_reservation(self, client):
         """
@@ -18,7 +18,7 @@ class Trip:
             if reservation.client == client:
                 raise ValueError(f"Client {client.name} already has a reservation for this connection")
         
-        # Create new reservation
+   
         reservation = Reservation(client, self.connection)
         self.reservations.append(reservation)
         return reservation

@@ -7,7 +7,6 @@ import axios from 'axios';
       const [routes, setRoutes] = useState([]);
       const [cities, setCities] = useState([]);
 
-      // Add form state for user input
       const [searchForm, setSearchForm] = useState({
         departureCity: '',
         arrivalCity: '',
@@ -16,12 +15,10 @@ import axios from 'axios';
       });
 
       useEffect(() => {
-        // Test connection
         axios.get('/message')
           .then(response => setMessage(response.data.message))
           .catch(error => console.error('Error fetching data:', error));
 
-        // Get all cities for dropdowns
         axios.get('/cities')
           .then(response => setCities(response.data.cities || []))
           .catch(error => console.error('Error fetching cities:', error));
@@ -43,7 +40,6 @@ import axios from 'axios';
         }
       };
 
-      // Handle form input changes
       const handleInputChange = (e) => {
         setSearchForm({
           ...searchForm,
@@ -56,7 +52,6 @@ import axios from 'axios';
           <h1>React Frontend with Flask Backend</h1>
           <p>{message}</p>
 
-          {/* Search Form - Now users can choose their own cities! */}
           <div style={{margin: '20px', padding: '20px', border: '1px solid #ccc'}}>
             <h3>Search Train Routes</h3>
 
