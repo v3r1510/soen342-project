@@ -51,8 +51,8 @@ class Connection:
         return {"departure_city": str(self.departure_city), "arrival_city": str(self.arrival_city),
                 "departure_time": self.departure_time, "arrival_time": self.arrival_time,
                 "train_type": str(self.train_type), "days_of_operation": self.days_of_operation,
-                "first_class_rate": self.first_class_rate, "second_class_rate": self.second_class_rate,
-                "trip_time": self.trip_time}
+                "first_class_rate": str(self.first_class_rate), "second_class_rate": str(self.second_class_rate),
+                "trip_time": str(self.trip_time)}
 
     def _key(self):
         return (
@@ -78,12 +78,12 @@ class Connection:
     def compare_departure_time(self, other):
         if not isinstance(other, Connection):
             return False
-        return self.departure_time - other.departure_time
+        return self.departure_time == other.departure_time
 
     def compare_arrival_time(self, other):
         if not isinstance(other, Connection):
             return False
-        return self.arrival_time - other.arrival_time
+        return self.arrival_time == other.arrival_time
 
     def compare_trip_time(self, other):
         if not isinstance(other, Connection):
@@ -113,12 +113,12 @@ class Connection:
     def compare_first_class_rate(self, other):
         if not isinstance(other, Connection):
             return False
-        return self.first_class_rate == other.first_class_rate
+        return int(self.first_class_rate) == int(other.first_class_rate)
 
     def compare_second_class_rate(self, other):
         if not isinstance(other, Connection):
             return False
-        return self.second_class_rate == other.second_class_rate
+        return int(self.second_class_rate) == int(other.second_class_rate)
 
     pass
     def __str__(self):

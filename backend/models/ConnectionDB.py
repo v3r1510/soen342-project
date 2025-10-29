@@ -36,13 +36,8 @@ class ConnectionDB:
     @staticmethod
     def find_departure_city(connection):
         same_departure = []
-        # print("this is the connection")
-        # print(connections)
-        # print(isinstance(connection, Connection))
         print(connection.departure_city)
         for i in connections:
-            # print("Comparing:", i.departure_city, "with", connection.departure_city)
-            # print("Result:", i.compare_departure_city(connection))
             if i.compare_departure_city(connection):
                 same_departure.append(i)
         return same_departure
@@ -72,7 +67,7 @@ class ConnectionDB:
         return same_train_type
 
     @staticmethod
-    def find_day_of_operation(connection):
+    def find_days_of_operation(connection):
         same_day_of_operation = []
         for i in connections:
             if i.compare_days_of_operation(connection):
@@ -80,7 +75,7 @@ class ConnectionDB:
         return same_day_of_operation
 
     @staticmethod
-    def find_first_class_fare(connection):
+    def find_first_class_rate(connection):
         same_first_class_fare = []
         for i in connections:
             if i.compare_first_class_rate(connection):
@@ -88,7 +83,7 @@ class ConnectionDB:
         return same_first_class_fare
 
     @staticmethod
-    def find_second_class_fare(connection):
+    def find_second_class_rate(connection):
         same_second_class_fare = []
         for i in connections:
             if i.compare_second_class_rate(connection):
