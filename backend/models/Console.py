@@ -36,8 +36,8 @@ class Console:
                 arrival_time=row['Arrival Time'],
                 train_type=row['Train Type'],
                 days_of_operation=row['Days of Operation'],
-                first_class_rate=row['First Class Rate'],
-                second_class_rate=row['Second Class Rate']
+                first_class_rate=row['First Class ticket rate (in euro)'],
+                second_class_rate=row['Second Class ticket rate (in euro)']
             )
             ConnectionDB.add_connection(connection)
 
@@ -47,26 +47,35 @@ class Console:
                      arrival_time=None, train_type=None, days_of_operation=None, 
                      first_class_rate=None, second_class_rate=None):
         """Search for routes based on criteria"""
-        results = []   
-    
-        user = Connection(departure_city, arrival_city, departure_time, arrival_time,train_type, days_of_operation, first_class_rate, second_class_rate)
-
+        print(departure_city)
+        results = []
+        user = Connection("U001", departure_city, arrival_city, departure_time, arrival_time,train_type, days_of_operation, first_class_rate, second_class_rate)
+        # print((user))
+        # print(user.departure_city)
         if departure_city:
-            results.append(ConnectionDB.find_departure_city(departure_city))
+            # departure_cities = ConnectionDB.find_departure_city(user)
+            results.append(ConnectionDB.find_departure_city(user))
         if arrival_city:
-            results.append(ConnectionDB.find_arrival_city(arrival_city))
+            # arrival_cities = ConnectionDB.find_arrival_city(user)
+            results.append(ConnectionDB.find_arrival_city(user))
         if departure_time:
-            results.append(ConnectionDB.find_departure_time(departure_time))
+            # departure_times = ConnectionDB.find_departure_time(user)
+            results.append(ConnectionDB.find_departure_time(user))
         if arrival_time:
-            results.append(ConnectionDB.find_arrival_time(arrival_time))
+            # arrivale_times = ConnectionDB.find_arrival_time(user)
+            results.append(ConnectionDB.find_arrival_time(user))
         if train_type:
-            results.append(ConnectionDB.find_train_type(train_type))
+            # train_types = ConnectionDB.find_train_type(user)
+            results.append(ConnectionDB.find_train_type(user))
         if days_of_operation:
-            results.append(ConnectionDB.find_days_of_operation(days_of_operation))
+            # days_of_operations = ConnectionDB.find_days_of_operation(user)
+            results.append(ConnectionDB.find_days_of_operation(user))
         if first_class_rate:
-            results.append(ConnectionDB.find_first_class_rate(first_class_rate))
+            # first_classe_rates = ConnectionDB.find_first_class_rate(user)
+            results.append(ConnectionDB.find_first_class_rate(user))
         if second_class_rate:
-            results.append(ConnectionDB.find_second_class_rate(second_class_rate))   
+            # second_class_rates = ConnectionDB.find_second_class_rate(user)
+            results.append(ConnectionDB.find_second_class_rate(user))
 
         if not results:
             return []

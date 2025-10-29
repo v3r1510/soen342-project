@@ -14,5 +14,9 @@ class City:
 
     def __hash__(self):
         return hash(self.city_name)
-
+    
+    def to_json(self):
+        return {
+            "name": self.name,
+        }
     pass
