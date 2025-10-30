@@ -28,13 +28,43 @@
                     <input type="text" placeholder="Train Type" id="trainType">
                 </div>
                 <div class="search-criteria">
-                    <input type="text" placeholder="Days of Operation" id="operationDays">
-                </div>
-                <div class="search-criteria">
                     <input type="text" placeholder="First Class ticket rate (€)" id="firstRate">
                 </div>
                 <div class="search-criteria">
                     <input type="text" placeholder="Second Class ticket rate (€)" id="secondRate">
+                </div>
+                <div class="search-criteria">
+                    <label>Operating Days: </label>
+                    <div class="day-selector" id="operationDays">
+                        <label class="day-checkbox">
+                            <input type="checkbox" name="days" value="Mon">
+                            <span>Mon</span>
+                        </label>
+                        <label class="day-checkbox">
+                            <input type="checkbox" name="days" value="Tue">
+                            <span>Tue</span>
+                        </label>
+                        <label class="day-checkbox">
+                            <input type="checkbox" name="days" value="Wed">
+                            <span>Wed</span>
+                        </label>
+                        <label class="day-checkbox">
+                            <input type="checkbox" name="days" value="Thu">
+                            <span>Thu</span>
+                        </label>
+                        <label class="day-checkbox">
+                            <input type="checkbox" name="days" value="Fri">
+                            <span>Fri</span>
+                        </label>
+                        <label class="day-checkbox">
+                            <input type="checkbox" name="days" value="Sat">
+                            <span>Sat</span>
+                        </label>
+                        <label class="day-checkbox">
+                            <input type="checkbox" name="days" value="Sun">
+                            <span>Sun</span>
+                        </label>
+                    </div>
                 </div>
                 <button type="button" id="searchConnection" onclick="sendHttpRequest()">Search Connection</button>
             </form >
