@@ -91,10 +91,10 @@ class DayParser:
             return False
         
         # Normalize user's selected days
-        normalized_user_days = [DayParser.normalize_day(d) for d in user_selected_days]
+        normalized_user_days = set([DayParser.normalize_day(d) for d in user_selected_days])
         
         # Parse connection's operating days
-        connection_days = DayParser.parse_days(connection_days_string)
+        connection_days = set(DayParser.parse_days(connection_days_string))
         
-        # Check if any user day is in connection days
-        return any(day in connection_days for day in normalized_user_days)
+        # Exact match: connection must operate ONLY on selected days (no more, no less)
+        return normalized_user_days == connection_days
