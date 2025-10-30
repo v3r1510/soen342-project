@@ -46,7 +46,14 @@ class Console:
     def search_routes(self, departure_city=None, arrival_city=None, departure_time=None, 
                      arrival_time=None, train_type=None, days_of_operation=None, 
                      first_class_rate=None, second_class_rate=None):
-        """Search for routes based on criteria"""
+        """
+        Search for routes based on criteria
+        days_of_operation can be:
+        - None: don't filter by days
+        - String: exact match or parse format
+        - List: user selected checkboxes (e.g., ['Monday', 'Friday'])
+        """
+        print(f"Searching with days_of_operation: {days_of_operation} (type: {type(days_of_operation)})")
         print(first_class_rate)
         results = []
         user = Connection("U001", departure_city, arrival_city, departure_time, arrival_time,train_type, days_of_operation, first_class_rate, second_class_rate)
