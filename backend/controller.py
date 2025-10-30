@@ -25,7 +25,17 @@ def search_routes():
         departure_time = data.get('departureTime', '').strip()
         arrival_time = data.get('arrivalTime', '').strip()
         train_type = data.get('trainType', '').strip()
-        days_of_operation = data.get('operationDays', '').strip()
+        
+        # Handle days_of_operation - can be string or array of selected days
+        days_of_operation = data.get('operationDays')
+        if isinstance(days_of_operation, str):
+            days_of_operation = days_of_operation.strip() if days_of_operation else None
+        elif isinstance(days_of_operation, list):
+            # Frontend sends array of selected days like ['Monday', 'Friday']
+            days_of_operation = days_of_operation if len(days_of_operation) > 0 else None
+        else:
+            days_of_operation = None
+            
         first_class_rate = data.get('firstRate')
         second_class_rate = data.get('secondRate')
         
@@ -35,7 +45,7 @@ def search_routes():
         departure_time = departure_time if departure_time else None
         arrival_time = arrival_time if arrival_time else None
         train_type = train_type if train_type else None
-        days_of_operation = days_of_operation if days_of_operation else None
+        # days_of_operation already handled above
         
  
         results = console.search_routes(
