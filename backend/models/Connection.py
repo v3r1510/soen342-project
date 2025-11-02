@@ -110,17 +110,11 @@ class Connection:
         if not isinstance(other, Connection):
             return False
         
-        # If other is a list (from user selection), use DayParser for exact matching
-        if isinstance(other, list):
-            return DayParser.days_match(other, self.days_of_operation)
+        # If other.days_of_operation is a list (from user selection), use DayParser for exact matching
+        if isinstance(other.days_of_operation, list):
+            return DayParser.days_match(other.days_of_operation, self.days_of_operation)
         
-        # If other is a Connection object with days_of_operation string
-        if hasattr(other, 'days_of_operation'):
-            # Parse both and check for any overlap
-            self_days = set(DayParser.parse_days(self.days_of_operation))
-            other_days = set(DayParser.parse_days(other.days_of_operation))
-            return bool(self_days & other_days)
-        
+        # If both are strings, just do simple comparison
         return self.days_of_operation == other.days_of_operation
 
     def compare_first_class_rate(self, other):
