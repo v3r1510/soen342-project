@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 from .CityDB import CityDB
 from .TrainDB import TrainDB
+from .DayParser import DayParser
 
 
 class Connection:
@@ -108,6 +109,12 @@ class Connection:
     def compare_days_of_operation(self, other):
         if not isinstance(other, Connection):
             return False
+        
+        # If other.days_of_operation is a list (from user selection), use DayParser for exact matching
+        if isinstance(other.days_of_operation, list):
+            return DayParser.days_match(other.days_of_operation, self.days_of_operation)
+        
+        # If both are strings, just do simple comparison
         return self.days_of_operation == other.days_of_operation
 
     def compare_first_class_rate(self, other):
