@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 from .CityDB import CityDB
 from .TrainDB import TrainDB
+from .DayParser import DayParser
 
 
 class Connection:
@@ -108,6 +109,18 @@ class Connection:
     def compare_days_of_operation(self, other):
         if not isinstance(other, Connection):
             return False
+        
+        # If other is a list (from user selection), use DayParser for exact matching
+        if isinstance(other, list):
+            return DayParser.days_match(other, self.days_of_operation)
+        
+        # If other is a Connection object with days_of_operation string
+        if hasattr(other, 'days_of_operation'):
+            # Parse both and check for any overlap
+            self_days = set(DayParser.parse_days(self.days_of_operation))
+            other_days = set(DayParser.parse_days(other.days_of_operation))
+            return bool(self_days & other_days)
+        
         return self.days_of_operation == other.days_of_operation
 
     def compare_first_class_rate(self, other):
