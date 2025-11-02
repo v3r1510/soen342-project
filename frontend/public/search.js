@@ -5,7 +5,12 @@ function sendHttpRequest() {
     const departureTime = document.getElementById('departureTime').value;
     const arrivalTime = document.getElementById('arrivalTime').value;
     const trainType = document.getElementById('trainType').value;
-    const operationDays = document.getElementById('operationDays').value;
+    
+   
+    const selectedDays = Array.from(document.querySelectorAll('input[name="days"]:checked'))
+        .map(checkbox => checkbox.value);
+    const operationDays = selectedDays.length > 0 ? selectedDays : null;
+    
     const firstRate = document.getElementById('firstRate').value;
     const secondRate = document.getElementById('secondRate').value;
 
