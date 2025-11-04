@@ -77,5 +77,5 @@ class DayParser:
         # Normalize user days
         normalized_user_days = [DayParser.normalize_day(d) for d in user_days]
         
-        # EXACT matching: sets must be equal
-        return set(normalized_user_days) == set(connection_days)
+        # Inclusive matching: 
+        return bool(set(normalized_user_days) & set(connection_days))
