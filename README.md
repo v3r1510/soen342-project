@@ -31,21 +31,22 @@ This is an academic project for the class SOEN342 - Software Requirements and De
 
 ### Prerequisites
 
-Having virtual environment in python : python -m *venv* venv
-*replace the first venv by the name you want your virtual environment to have* 
-PS never commit the venv to your repo
+Having virtual environment in python : python -m `venv` venv
+- `replace the first venv by the name you want your virtual environment to have` 
+- PS: never commit the venv to your repository.
+  
 ### Installation
 
-Activate your virtual environment : 
-    venv/Script/activate
-Once the environment is active, install the requirements:
-    pip install -r requirements.txt 
+1. Activate your virtual environment : 
+    `venv/Script/activate`
+2. Once the environment is active, install the requirements:
+    `pip install -r requirements.txt`
 
 ## Start the backend 
-Go to your backend folder: 
-    cd backend
-Start the flask app:
-    flask --run
+1. Go to your backend folder: 
+    `cd backend`
+2. Start the flask app:
+    `flask --run`
 
 ## Usage
 ### For Users
