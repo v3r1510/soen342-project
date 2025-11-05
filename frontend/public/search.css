@@ -128,8 +128,6 @@ input[type="text"]:focus {
     color:rgb(218, 212, 43);
 }
 
-
-
 .container {
     background-color: white;
     box-shadow: 2px 0 8px rgba(23, 27, 94, 0.573);
@@ -148,4 +146,74 @@ input[type="text"]:focus {
     word-break: break-word;
 }
 
+.sorting-buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    width: 100%;
+}
 
+.sorting-buttons button {
+    background-color: #152166;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    margin: 0 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+}
+
+.sorting-buttons button:hover {
+    background-color: #0e194b;
+    color: rgb(218, 212, 43);
+}
+
+#results-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.route-item {
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 16px;
+    width: 70%;
+    max-width: 600px;
+    flex: 1 1 300px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.route-item h3 {
+    color: #152166;
+    margin-top: 0;
+    margin-bottom: 2px;
+}
+
+.route-item p {
+    margin: 0 0;
+    color: #495057;
+}
+
+#book-now {
+    background-color: rgb(218, 212, 43);
+    color: #152166;
+    width: 100%;
+    border: none;
+    padding: 8px 16px;
+    margin-top: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+}
+
+#book-now:hover {
+    background-color: #d4d034;
+}
