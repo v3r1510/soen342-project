@@ -7,21 +7,6 @@ header{
     font-size: 0.7em;
 }
 
-header button {
-    margin-left: auto;
-    background-color: #e6e039;
-    color: black;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 1.2em;
-}
-
-header button:hover {
-    background-color: #d4d034;
-}
-
 h1 {
     padding: 10px;
     color: rgb(218, 212, 43);
@@ -49,20 +34,9 @@ body {
     min-height: 80vh;
 }
 
-.sidebar {
-    width: 20%;
-    min-width: 260px;
-    padding-left: 30px;
-    background: #f8f9fa;
-    display: flex;
-    flex-direction: column;
-    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.04);
-}
-
 .container {
     background-color: white;
-    box-shadow: 2px 0 8px rgba(23, 27, 94, 0.573);
-    width: 80%;
+    width: 100%;
     min-height: 400px;
     margin: 0;
     overflow-x: auto;

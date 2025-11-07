@@ -100,7 +100,7 @@ function displaySortedResults(routes, container) {
         routeDiv.innerHTML = `
             <h3>${route.departure_city} → ${route.arrival_city}</h3>
             <p>Departure: <strong>${route.departure_time}</strong> | Arrival: <strong>${route.arrival_time}</strong></p>
-            <p>Duration: <strong>${route.trip_time} minutes</strong></p>
+            <p>Duration: <strong>${route.trip_time} hours</strong></p>
             <p>Train Type: <strong>${route.train_type}</strong></p>
             <p>Operating Days: <strong>${route.days_of_operation}</strong></p>
             <p>First Class: <strong>€${route.first_class_rate}</strong> | Second Class: <strong>€${route.second_class_rate}</strong></p>
