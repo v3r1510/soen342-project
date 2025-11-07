@@ -45,8 +45,14 @@ class Connection:
 
         departure = parse_time(self.departure_time)
         arrival = parse_time(self.arrival_time)
+        time = int((arrival - departure).total_seconds() / 60)
+        if(time > 60):
+            hours = time // 60
+            minutes = time % 60
 
-        return int((arrival - departure).total_seconds() / 60)
+            time = f"{hours}:{minutes:02d}"
+
+        return time
 
     def to_json(self):
         return {"departure_city": str(self.departure_city), "arrival_city": str(self.arrival_city),

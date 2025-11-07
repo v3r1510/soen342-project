@@ -1,4 +1,5 @@
 import pandas as pd
+from datetime import datetime, timedelta
 from .Connection import Connection
 from .ConnectionDB import ConnectionDB
 from .CityDB import CityDB
@@ -42,6 +43,71 @@ class Console:
             ConnectionDB.add_connection(connection)
 
         print(f"Loaded {len(connections)} connections")
+
+    def _parse_time(self, time_str):
+        
+        if not time_str:
+            return None
+            
+        # Handle next day notation
+        next_day = False
+        if "(+1d)" in time_str:
+            next_day = True
+            time_str = time_str.replace("(+1d)", "").strip()
+        
+        # Try different time formats
+        formats = ["%H:%M:%S", "%H:%M", "%I:%M:%S %p", "%I:%M %p"]
+        for fmt in formats:
+            try:
+                dt = datetime.strptime(time_str, fmt)
+                if next_day:
+                    dt += timedelta(days=1)
+                return dt
+            except ValueError:
+                continue
+        return None
+    
+    def _calculate_layover_minutes(self, first_segment, second_segment):
+        
+        arrival_time = self._parse_time(first_segment.arrival_time)
+        departure_time = self._parse_time(second_segment.departure_time)
+        
+        if not arrival_time or not departure_time:
+            return None
+        
+        # Calculate difference
+        layover = departure_time - arrival_time
+        return int(layover.total_seconds() / 60)
+    
+    def _is_daytime(self, time_str):
+        
+        dt = self._parse_time(time_str)
+        if not dt:
+            return True  # Default to daytime if can't parse
+        
+        hour = dt.hour
+        return 6 <= hour < 22
+    
+    def _is_valid_layover(self, first_segment, second_segment):
+        
+        layover_minutes = self._calculate_layover_minutes(first_segment, second_segment)
+        
+        if layover_minutes is None:
+            return True  # Can't calculate, allow it
+        
+        # Negative layover means impossible connection
+        if layover_minutes < 0:
+            return False
+        
+        # Check if arrival time is during daytime or after hours
+        is_daytime = self._is_daytime(first_segment.arrival_time)
+        
+        if is_daytime:
+            # Daytime policy: 30 min to 2 hours
+            return 30 <= layover_minutes <= 120
+        else:
+            # After hours policy: maximum 30 minutes
+            return layover_minutes <= 30
 
     def search_routes(self, departure_city=None, arrival_city=None, departure_time=None, 
                      arrival_time=None, train_type=None, days_of_operation=None, 
@@ -200,10 +266,12 @@ class Console:
             
             # Add each valid route combination as a grouped journey
             for second_segment in second_segments:
-                one_stop_routes.append({
-                    'route_type': '1-stop',
-                    'segments': [first_segment, second_segment]
-                })
+                # Validate layover duration before adding
+                if self._is_valid_layover(first_segment, second_segment):
+                    one_stop_routes.append({
+                        'route_type': '1-stop',
+                        'segments': [first_segment, second_segment]
+                    })
         
         return one_stop_routes
     
@@ -275,10 +343,13 @@ class Console:
                 
                 # Add each valid route combination as a grouped journey
                 for final_segment in final_segments:
-                    two_stop_routes.append({
-                        'route_type': '2-stop',
-                        'segments': [first_segment, second_segment, final_segment]
-                    })
+                    # Validate both layovers before adding
+                    if (self._is_valid_layover(first_segment, second_segment) and 
+                        self._is_valid_layover(second_segment, final_segment)):
+                        two_stop_routes.append({
+                            'route_type': '2-stop',
+                            'segments': [first_segment, second_segment, final_segment]
+                        })
         
         return two_stop_routes
 
