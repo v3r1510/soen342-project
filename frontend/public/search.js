@@ -100,12 +100,19 @@ function displaySortedResults(routes, container) {
         routeDiv.innerHTML = `
             <h3>${route.departure_city} → ${route.arrival_city}</h3>
             <p>Departure: <strong>${route.departure_time}</strong> | Arrival: <strong>${route.arrival_time}</strong></p>
-            <p>Duration: <strong>${route.trip_time} minutes</strong></p>
+            <p>Duration: <strong>${route.trip_time} hours</strong></p>
             <p>Train Type: <strong>${route.train_type}</strong></p>
             <p>Operating Days: <strong>${route.days_of_operation}</strong></p>
             <p>First Class: <strong>€${route.first_class_rate}</strong> | Second Class: <strong>€${route.second_class_rate}</strong></p>
-            <button onclick="bookNow('${route.id}')" id="book-now">Book Now</button>
+            <button onclick="bookNow('${route.id}')" class="book-now" id="book-now">Book Now</button>
         `.trim();
         container.appendChild(routeDiv);
+
+        // event listener for booking button (and store in local storage):
+        const bookBtn = routeDiv.querySelector('.book-now');
+        bookBtn.addEventListener('click', () => {
+            localStorage.setItem('selectedTrip', JSON.stringify(route));
+            window.location.href = 'booking.html';
+        });
     });
 }

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Railway network system</title>
+    <link rel="stylesheet" href="profile.css">
+</head>
+<body>
+    <header><h1 onclick="window.location.href='index.html'">Euro-Railway</h1></header>
+    <div class="main-layout">
+        <div class="container">
+            <h2>My trips</h2>
+            <section class="search-box">
+                <form id="client-search-form">
+                        <label for="client-lastname">Last name:</label>
+                        <input type="text" id="client-lastname" name="client-lastname" required />
+                        <label for="client-id">Client ID:</label>
+                        <input type="text" id="client-id" name="client-id" required />
+                        <button type="submit" id="search-btn">Search my trips</button>
+                </form>
+            </section>
+
+            <section id="results" style="width:100%;">
+                <h3>Upcoming & Current trips</h3>
+                <div id="current-trips" class="trip-list"></div>
+                <h3>Past trips</h3>
+                <div id="past-trips" class="trip-list"></div>
+            </section>
+        </div>
+    </div>
+    <script src="profile.js"></script>
+</body>
+</html>
