@@ -11,7 +11,22 @@
     <div class="main-layout">
         <div class="container">
             <h2>My trips</h2>
-            <div class="trip-history"></div>
+            <section class="search-box">
+                <form id="client-search-form">
+                        <label for="client-lastname">Last name:</label>
+                        <input type="text" id="client-lastname" name="client-lastname" required />
+                        <label for="client-id">Client ID:</label>
+                        <input type="text" id="client-id" name="client-id" required />
+                        <button type="submit" id="search-btn">Search my trips</button>
+                </form>
+            </section>
+
+            <section id="results" style="width:100%;">
+                <h3>Upcoming & Current trips</h3>
+                <div id="current-trips" class="trip-list"></div>
+                <h3>Past trips</h3>
+                <div id="past-trips" class="trip-list"></div>
+            </section>
         </div>
     </div>
     <script src="profile.js"></script>

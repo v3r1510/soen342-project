@@ -76,6 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 firstName: document.getElementById(`firstName-${i}`).value,
                 lastName: document.getElementById(`lastName-${i}`).value,
                 age: document.getElementById(`age-${i}`).value,
+                officialId: document.getElementById(`officialid-${i}`).value,
                 class: document.getElementById(`class-${i}`).value,
                 ticketNumber: generateTicketNumber(),
             };
@@ -111,6 +112,8 @@ function createTravellerForm(travellerId) {
         <select id="age-${travellerId}" name="age-${travellerId}" required>
             <option value="">Select Age</option>
         </select>
+        <label for="officialid-${travellerId}">Official ID:</label>
+        <input type="text" id="officialid-${travellerId}" name="officialid-${travellerId}" required>
         <label for="class-${travellerId}">Travel Class:</label>
         <select id="class-${travellerId}" name="class-${travellerId}" required>
             <option value="">Select Class</option>
