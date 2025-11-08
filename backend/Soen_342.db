@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS Client (
 );
 
 CREATE TABLE IF NOT EXISTS Connections (
-  route_id          INTEGER PRIMARY KEY,
+  route_id          TEXT PRIMARY KEY,
   departure_city    TEXT NOT NULL REFERENCES Cities(City_name),
   arrival_city      TEXT NOT NULL REFERENCES Cities(City_name),
   departure_time    TEXT NOT NULL,
@@ -29,20 +29,20 @@ CREATE TABLE IF NOT EXISTS Connections (
 );
 
 CREATE TABLE IF NOT EXISTS Trips (
-  trip_id  INTEGER PRIMARY KEY,
-  route_id INTEGER NOT NULL REFERENCES Connections(route_id)
+  trip_id  TEXT PRIMARY KEY,
+  route_id TEXT NOT NULL REFERENCES Connections(route_id)
 );
 
 CREATE TABLE IF NOT EXISTS Reservations (
   reservation_id INTEGER PRIMARY KEY,
-  trip_id        INTEGER NOT NULL REFERENCES Trips(trip_id),
+  trip_id        TEXT NOT NULL REFERENCES Trips(trip_id),
   client_id      INTEGER NOT NULL REFERENCES Client(client_id),
-  route_id       INTEGER NOT NULL REFERENCES Connections(route_id)
+  route_id       TEXT NOT NULL REFERENCES Connections(route_id)
 );
 
 CREATE TABLE IF NOT EXISTS Tickets (
   tickets_id     INTEGER PRIMARY KEY,
   reservation_id INTEGER NOT NULL REFERENCES Reservations(reservation_id),
   client_id      INTEGER NOT NULL REFERENCES Client(client_id),
-  route_id       INTEGER NOT NULL REFERENCES Connections(route_id)
+  route_id       TEXT NOT NULL REFERENCES Connections(route_id)
 );
