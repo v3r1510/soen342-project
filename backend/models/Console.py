@@ -4,11 +4,8 @@ from .Connection import Connection
 from .ConnectionDB import ConnectionDB
 from .CityDB import CityDB
 from .TrainDB import TrainDB
-from .CityDB import cities  
-from .TrainDB import trains
-from .ConnectionDB import connections
-from .ClientDB import ClientDB, clients
-from .TripDB import TripDB, trips
+from .ClientDB import ClientDB
+from .TripDB import TripDB
 from .Trip import Trip
 
 class Console:
@@ -25,7 +22,9 @@ class Console:
             CityDB.add_city(row['Arrival City'])
             TrainDB.add_train(row['Train Type'])
 
-        print(f"Loaded {len(cities)} cities and {len(trains)} trains")
+        cities_count = len(CityDB.get_all_cities())
+        trains_count = len(TrainDB.get_all_trains())
+        print(f"Loaded {cities_count} cities and {trains_count} trains")
 
         print("innitializing connections")
         for _, row in self.file_data.iterrows():
@@ -42,7 +41,8 @@ class Console:
             )
             ConnectionDB.add_connection(connection)
 
-        print(f"Loaded {len(connections)} connections")
+        connections_count = len(ConnectionDB.get_all_connections())
+        print(f"Loaded {connections_count} connections")
 
     def _parse_time(self, time_str):
         
@@ -355,15 +355,17 @@ class Console:
 
     def get_all_routes(self):
         """Get all available routes"""
-        return connections
+        return ConnectionDB.get_all_connections()
 
     def get_all_cities(self):
         """Get all available cities"""
-        return [city.name for city in cities]
+        cities = CityDB.get_all_cities()
+        return [city.city_name for city in cities]
 
     def get_all_train_types(self):
         """Get all available train types"""
-        return [train.name for train in trains]
+        trains = TrainDB.get_all_trains()
+        return [train.train_type for train in trains]
 
     def routes_to_json(self, routes_list):
         """Convert list of routes to JSON format for frontend"""
@@ -403,11 +405,11 @@ class Console:
 
     def get_all_clients(self):
         """Get all clients who have made reservations"""
-        return clients
+        return ClientDB.get_all_clients()
 
     def get_all_trips(self):
         """Get all booked trips"""
-        return trips
+        return TripDB.get_all_trips()
 
     def find_trip_by_id(self, trip_id):
         """Find a specific trip by ID"""

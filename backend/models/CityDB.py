@@ -1,29 +1,50 @@
 from .City import City
-
-cities = []
+from .Database import Database
 
 class CityDB:
     @staticmethod
     def add_city(city_name):
-        temp_city = City(city_name)
-        if CityDB.search_city(temp_city):
+       
+        if CityDB.search_city(city_name):
             print("City already exists")
             return False
-        else:
-            cities.append(temp_city)
-            return True
+        
+        query = "INSERT INTO Cities (City_name) VALUES (?)"
+        result = Database.execute_query(query, (city_name,))
+        return result is not None
+    
     @staticmethod
     def search_city(city):
-        if not isinstance(city, City):
-            city = City(city)
-
-        return city in cities
+       
+        if isinstance(city, City):
+            city_name = city.city_name
+        else:
+            city_name = city
+        
+        query = "SELECT City_name FROM Cities WHERE City_name = ?"
+        result = Database.execute_query(query, (city_name,), fetch_one=True)
+        return result is not None
+    
     @staticmethod
     def find_city(city):
-        if not isinstance(city, City):
-            city = City(city)
-
-        for c in cities:
-            if c == city:
-                return c
+        
+        if isinstance(city, City):
+            city_name = city.city_name
+        else:
+            city_name = city
+        
+        query = "SELECT City_name FROM Cities WHERE City_name = ?"
+        result = Database.execute_query(query, (city_name,), fetch_one=True)
+        
+        if result:
+            return City(result[0])
         return None
+    
+    @staticmethod
+    def get_all_cities():
+        query = "SELECT City_name FROM Cities"
+        results = Database.execute_query(query, fetch_all=True)
+        
+        if results:
+            return [City(row[0]) for row in results]
+        return []

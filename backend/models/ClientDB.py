@@ -1,32 +1,42 @@
 from .Client import Client
-
-clients = []  #list to store all clients (our db)
-
+from .Database import Database
 
 class ClientDB:
     @staticmethod
     def add_client(name, age, client_id):
+    
         # Check if client already exists
         existing_client = ClientDB.find_client(client_id)
         if existing_client:
             return existing_client
         
         # Create new client
-        client = Client(name, age, client_id)
-        clients.append(client)
-        return client
+        query = "INSERT INTO Client (client_id, name, age) VALUES (?, ?, ?)"
+        result = Database.execute_query(query, (client_id, name, age))
+        
+        if result is not None:
+            return Client(name, age, client_id)
+        return None
 
     @staticmethod
     def find_client(client_id):
-        for client in clients:
-            if client.client_id == client_id:
-                return client
+        query = "SELECT client_id, name, age FROM Client WHERE client_id = ?"
+        result = Database.execute_query(query, (client_id,), fetch_one=True)
+        
+        if result:
+            return Client(result[1], result[2], result[0])
         return None
 
     @staticmethod
     def get_all_clients():
-        return clients
+        query = "SELECT client_id, name, age FROM Client"
+        results = Database.execute_query(query, fetch_all=True)
+        
+        if results:
+            return [Client(row[1], row[2], row[0]) for row in results]
+        return []
 
     @staticmethod
     def client_exists(client_id):
+
         return ClientDB.find_client(client_id) is not None
