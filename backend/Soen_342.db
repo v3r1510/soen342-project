@@ -1,0 +1,48 @@
+PRAGMA foreign_keys = ON;
+
+CREATE TABLE IF NOT EXISTS Cities (
+  City_name TEXT PRIMARY KEY
+);
+
+CREATE TABLE IF NOT EXISTS Trains (
+  train_id   INTEGER PRIMARY KEY,
+  train_type TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS Client (
+  client_id INTEGER PRIMARY KEY,
+  name      TEXT NOT NULL,
+  age       INTEGER
+);
+
+CREATE TABLE IF NOT EXISTS Connections (
+  route_id          INTEGER PRIMARY KEY,
+  departure_city    TEXT NOT NULL REFERENCES Cities(City_name),
+  arrival_city      TEXT NOT NULL REFERENCES Cities(City_name),
+  departure_time    TEXT NOT NULL,
+  arrival_time      TEXT NOT NULL,
+  train_id          INTEGER NOT NULL REFERENCES Trains(train_id),
+  days_of_operation TEXT,
+  first_class_rate  REAL NOT NULL,
+  second_class_rate REAL NOT NULL,
+  trip_time         INTEGER NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS Trips (
+  trip_id  INTEGER PRIMARY KEY,
+  route_id INTEGER NOT NULL REFERENCES Connections(route_id)
+);
+
+CREATE TABLE IF NOT EXISTS Reservations (
+  reservation_id INTEGER PRIMARY KEY,
+  trip_id        INTEGER NOT NULL REFERENCES Trips(trip_id),
+  client_id      INTEGER NOT NULL REFERENCES Client(client_id),
+  route_id       INTEGER NOT NULL REFERENCES Connections(route_id)
+);
+
+CREATE TABLE IF NOT EXISTS Tickets (
+  tickets_id     INTEGER PRIMARY KEY,
+  reservation_id INTEGER NOT NULL REFERENCES Reservations(reservation_id),
+  client_id      INTEGER NOT NULL REFERENCES Client(client_id),
+  route_id       INTEGER NOT NULL REFERENCES Connections(route_id)
+);
