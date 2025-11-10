@@ -37,8 +37,8 @@ Having virtual environment in python : python -m `venv` venv
   
 ### Installation
 
-1. Activate your virtual environment : 
-    `venv/Script/activate`
+1. Navigate to the project's directory, then activate your virtual environment : 
+    `venv/Scripts/activate`
 2. Once the environment is active, install the requirements:
     `pip install -r requirements.txt`
 
@@ -57,7 +57,10 @@ Having virtual environment in python : python -m `venv` venv
 5. Browse the results
 
 #### Booking a Trip
-*TBD*
+1. Click "Book Now" on the desired connection
+2. Fill out the form for the first traveller.
+3. If there is more than 1 traveller for this trip, click "Add a traveller" (can have up to 4 travellers for a same booking). There is also the button "Remove last traveller" in case that an extra one was mistakenly added.
+4. Click "Confirm Booking" when the forms are all completed. This will redirect you to "View My Trips", where you can see your upcoming (and past) reservations.
 
 ### For Administrators
 #### Loading available connections
@@ -72,10 +75,16 @@ rail-network-system/
 │   ├── iteration1/
 │   └── iteration2/
 ├── frontend/           # Frontend code
-│   └── public/         # Helper functions
-│     ├── index.html/   # Main page file
-│     ├── search.css/   # CSS file
-│     └── search.js/    # JavaScript file
+│   └── public/
+│     ├── index.html/   # Main page files:
+│     ├── search.css/
+│     ├── search.js/ 
+│     ├── booking.html/ # Booking form files:
+│     ├── booking.css/
+│     ├── booking.js/
+│     ├── profile.html/ # Viewing trips history files:
+│     ├── profile.css/
+│     └── profile.js/
 ├── backend/            # Backend code
 │   ├── models/         # *This folder will contain the models, in other words, our objects*
 │   └── controllers/    # *This folder will contain the controllers, it will be the link between the frontend and backend*
