@@ -38,7 +38,7 @@ Having virtual environment in python : python -m `venv` venv
 ### Installation
 
 1. Navigate to the project's directory, then activate your virtual environment : 
-    `venv/Scripts/activate`
+    `.\venv\Scripts\activate`
 2. Once the environment is active, install the requirements:
     `pip install -r requirements.txt`
 
