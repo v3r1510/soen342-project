@@ -7,7 +7,6 @@ if (!selectedTrip) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    // displaying chosen connection
     document.getElementById('trip-summary').innerHTML = `
         <h2>Selected Connection:</h2>
         <p><strong>Route:</strong> ${selectedTrip.departure_city} → ${selectedTrip.arrival_city}</p>
@@ -26,21 +25,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const travellersContainer = document.getElementById('travellers-container');
     const bookingForm = document.getElementById('booking-form');
 
-    // add traveller
+    // add traveller:
     addTravellerBtn.addEventListener('click', () => {
         if (travellerCount < maxTravellers) {
             travellerCount++;
             const newTravellerForm = createTravellerForm(travellerCount);
             travellersContainer.appendChild(newTravellerForm);
+            populateAgeSelect(`age-${travellerCount}`); // (age select for the next added traveller)
             removeTravellerBtn.disabled = false;
-            
             if (travellerCount === maxTravellers) {
                 addTravellerBtn.disabled = true;
             }
         }
     });
 
-    // remove traveller
+    // remove traveller:
     removeTravellerBtn.addEventListener('click', () => {
         if (travellerCount > 1) {
             travellersContainer.removeChild(travellersContainer.lastChild);
@@ -53,20 +52,31 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    const ageSelect = document.getElementById('age-1');
-    for (let i = 1; i <= 100; i++) {
-        const option = document.createElement('option');
-        option.value = i;
-        option.textContent = i;
-        ageSelect.appendChild(option);
+    // helper to show all age select options for each traveller id:
+    function populateAgeSelect(selectId) {
+        const ageSelect = document.getElementById(selectId);
+        if (!ageSelect) return;
+        ageSelect.innerHTML = '';
+        const placeholder = document.createElement('option');
+        placeholder.value = '';
+        placeholder.textContent = 'Select Age';
+        ageSelect.appendChild(placeholder);
+        for (let i = 1; i <= 100; i++) {
+            const option = document.createElement('option');
+            option.value = i;
+            option.textContent = i;
+            ageSelect.appendChild(option);
+        }
     }
+
+    populateAgeSelect('age-1');
 
     // generate a unique ticket number and trip ID
     function generateTicketNumber() {
     return `TKT${Date.now()}${Math.floor(Math.random() * 1000)}`;
     }
 
-    // to confirm booking, save booking data to localStorage for the next step
+    // to confirm booking, save booking data to localStorage to be able to view in My Trips:
     bookingForm.addEventListener('submit', (e) => {
         e.preventDefault();
         const travellers = [];
@@ -84,13 +94,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const bookingData = {
-            trip: selectedTrip,
+            trip: Object.assign({}, selectedTrip, {
+                // store only the travel date as a string (YYYY-MM-DD)
+                trip_date: document.getElementById('trip-date').value
+            }),
             travellers: travellers,
             totalTravellers: travellerCount,
             bookingId: generateTicketNumber()
         };
 
-        localStorage.setItem('bookingData', JSON.stringify(bookingData));
+        //unique key to store booking:
+        const bookingKey = `booking_${bookingData.bookingId}`;
+        localStorage.setItem(bookingKey, JSON.stringify(bookingData));
 
         window.location.href = 'profile.html';
     });
