@@ -1,12 +1,13 @@
 import uuid
 from .Reservation import Reservation
+from .Ticket import Ticket
 
 
 class Trip:
     def __init__(self, connection):
-        self.trip_id = str(uuid.uuid4())[:8].upper()  
-        self.connection = connection 
-        self.reservations = []  
+        self.trip_id = str(uuid.uuid4())[:8].upper()
+        self.connection = connection
+        self.reservations = []
 
     def add_reservation(self, client):
         """
@@ -17,9 +18,9 @@ class Trip:
         for reservation in self.reservations:
             if reservation.client == client:
                 raise ValueError(f"Client {client.name} already has a reservation for this connection")
-        
-   
         reservation = Reservation(client, self.connection)
+        ticket = Ticket(client, self.connection)
+        reservation.ticket = ticket
         self.reservations.append(reservation)
         return reservation
 
@@ -51,9 +52,13 @@ class Trip:
                 "arrival_city": self.connection.arrival_city.city_name,
                 "departure_time": self.connection.departure_time,
                 "arrival_time": self.connection.arrival_time,
-                "train_type": self.connection.train_type.train_type
+                "train_type": self.connection.train_type.train_type,
             },
             "reservations": [res.to_json() for res in self.reservations],
             "reservation_count": len(self.reservations),
-            "tickets": [ticket.to_json() for ticket in self.get_all_tickets()]
+            "tickets": [
+                ticket.to_json()
+                for ticket in self.get_all_tickets()
+                if ticket is not None
+            ],
         }

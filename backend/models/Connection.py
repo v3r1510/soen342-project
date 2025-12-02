@@ -55,7 +55,7 @@ class Connection:
         return time
 
     def to_json(self):
-        return {"departure_city": str(self.departure_city), "arrival_city": str(self.arrival_city),
+        return {"route_id": self.route_id, "departure_city": str(self.departure_city), "arrival_city": str(self.arrival_city),
                 "departure_time": self.departure_time, "arrival_time": self.arrival_time,
                 "train_type": str(self.train_type), "days_of_operation": self.days_of_operation,
                 "first_class_rate": str(self.first_class_rate), "second_class_rate": str(self.second_class_rate),

@@ -34,14 +34,14 @@ function sendHttpRequest() {
         },
         body: JSON.stringify(requestBody)
     })
-    .then(response => response.json())
-    .then(data => {
-        console.log('Search results:', data);
-        displayResults(data.routes);
-    })
-    .catch(error => {
-        console.error('Search failed:', error);
-    });
+        .then(response => response.json())
+        .then(data => {
+            console.log('Search results:', data);
+            displayResults(data.routes);
+        })
+        .catch(error => {
+            console.error('Search failed:', error);
+        });
 }
 
 function displayResults(routes) {
@@ -87,14 +87,14 @@ function sortResults(parameter) {
 
 function displaySortedResults(routes, container) {
     container.innerHTML = '';
-    
+
     if (routes.length === 0) {
         container.innerHTML = '<p>No results found</p>';
         return;
     }
 
     // creating display card for each connection:
-    routes.forEach(route => {
+    routes.forEach((route, index) => {
         const routeDiv = document.createElement('div');
         routeDiv.className = 'route-item';
         routeDiv.innerHTML = `
@@ -104,13 +104,19 @@ function displaySortedResults(routes, container) {
             <p>Train Type: <strong>${route.train_type}</strong></p>
             <p>Operating Days: <strong>${route.days_of_operation}</strong></p>
             <p>First Class: <strong>€${route.first_class_rate}</strong> | Second Class: <strong>€${route.second_class_rate}</strong></p>
-            <button onclick="bookNow('${route.id}')" class="book-now" id="book-now">Book Now</button>
+            <button onclick="bookNow('${route.route_id}')" class="book-now" id="book-now">Book Now</button>
         `.trim();
         container.appendChild(routeDiv);
 
         // event listener for booking button (and store in local storage):
         const bookBtn = routeDiv.querySelector('.book-now');
         bookBtn.addEventListener('click', () => {
+            if (!route.route_id){
+                console.log("Route missing ID: ", route)
+                alert('Error: This route cannot be booked (missing ID)')
+                return;
+            }
+            console.log("Storing route for booking:", route)
             localStorage.setItem('selectedTrip', JSON.stringify(route));
             window.location.href = 'booking.html';
         });

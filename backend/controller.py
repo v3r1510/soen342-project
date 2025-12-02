@@ -1,5 +1,7 @@
 from flask import Flask, request, jsonify, Blueprint
 from models.Console import Console
+from models.ConnectionDB import ConnectionDB
+
 
 bp = Blueprint('controller', __name__, url_prefix='/')
 
@@ -117,60 +119,60 @@ def get_train_types():
         return jsonify({"error": str(e)}), 500
 
 @bp.route('/book-trip', methods=['POST'])
-def book_trip():
-    """
-    Book a trip for one or more travelers
-    
-    Expected JSON format:
-    {
-        "route_id": "R001",
-        "travelers": [
-            {"name": "John Doe", "age": 35, "client_id": "ID123456"},
-            {"name": "Jane Doe", "age": 33, "client_id": "ID789012"}
-        ]
-    }
-    """
+def api_book_trip():
     if not console:
         return jsonify({"error": "System not initialized"}), 500
-    
+
     try:
         data = request.get_json()
-        
 
+        # 1) Basic payload validation
         if 'route_id' not in data or 'travelers' not in data:
             return jsonify({"error": "Missing required fields: route_id and travelers"}), 400
-        
+
         route_id = data['route_id']
         travelers = data['travelers']
-        
- 
+
         if not isinstance(travelers, list) or len(travelers) == 0:
             return jsonify({"error": "At least one traveler is required"}), 400
-        
+
         for traveler in travelers:
-            if 'name' not in traveler or 'age' not in traveler or 'client_id' not in traveler:
-                return jsonify({"error": "Each traveler must have name, age, and client_id"}), 400
-        
-  
-        from models.ConnectionDB import connections
-        connection = None
-        for conn in connections:
-            if conn.route_id == route_id:
-                connection = conn
-                break
-        
+            if ('name' not in traveler or
+                'age' not in traveler or
+                'client_id' not in traveler):
+                return jsonify({
+                    "error": "Each traveler must have name, age, and client_id"
+                }), 400
+
+        # 2) Find the Connection object for this route_id
+        all_connections = ConnectionDB.get_all_connections()
+        # compare as strings to avoid int/str mismatch
+        connection = next(
+            (c for c in all_connections if str(c.route_id) == str(route_id)),
+            None
+        )
+
         if not connection:
-            return jsonify({"error": f"Connection with route_id {route_id} not found"}), 404
-        
-  
+            return jsonify({
+                "error": f"Connection with route_id {route_id} not found"
+            }), 404
+
+        # 3) Ask Console to book the trip
         trip = console.book_trip(travelers, connection)
-        
+
+        # Safety check to avoid NoneType.to_json crash
+        if trip is None:
+            return jsonify({
+                "error": "Internal error: trip object is None (check console.book_trip / TripDB)"
+            }), 500
+
+        # 4) Success
         return jsonify({
             "success": True,
             "message": "Trip booked successfully",
             "trip": trip.to_json()
-        })
-        
+        }), 200
+
     except ValueError as e:
         return jsonify({"error": str(e)}), 400
     except Exception as e:

@@ -176,7 +176,6 @@ class Console:
             all_routes.extend(two_stop_routes)
         
         # Flatten the grouped routes back to individual segments for backward compatibility
-        
         flattened_results = []
         for route in all_routes:
             for segment in route['segments']:
