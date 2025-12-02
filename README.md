@@ -23,7 +23,7 @@ This is an academic project for the class SOEN342 - Software Requirements and De
 - Manage databases
 
 ## Technologies Used
-- **Frontend**: HTML, CSS, JavaScript, React
+- **Frontend**: HTML, CSS, JavaScript
 - **Backend**: Python
 - **Database**: Python Arrays
 
@@ -61,10 +61,6 @@ Having virtual environment in python : python -m `venv` venv
 2. Fill out the form for the first traveller.
 3. If there is more than 1 traveller for this trip, click "Add a traveller" (can have up to 4 travellers for a same booking). There is also the button "Remove last traveller" in case that an extra one was mistakenly added.
 4. Click "Confirm Booking" when the forms are all completed. This will redirect you to "View My Trips", where you can see your upcoming (and past) reservations.
-
-### For Administrators
-#### Loading available connections
-*TBD*
 
 ## Project Structure
 ```
