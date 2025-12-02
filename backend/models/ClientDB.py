@@ -8,6 +8,7 @@ class ClientDB:
         if existing_client:
             return existing_client
 
+        age = int(age)
         query = "INSERT INTO Client (client_id, name, age) VALUES (?, ?, ?)"
         Database.execute_query(query, (client_id, name, age))
 

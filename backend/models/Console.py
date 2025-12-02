@@ -7,6 +7,7 @@ from .TrainDB import TrainDB
 from .ClientDB import ClientDB
 from .TripDB import TripDB
 from .Trip import Trip
+from .ReservationDB import ReservationDB
 
 class Console:
     def __init__(self, filename):
@@ -392,11 +393,13 @@ class Console:
             
             # Add reservation for this client
             try:
-                trip.add_reservation(client)
+                reservation = trip.add_reservation(client)
             except ValueError as e:
                 # Client already has a reservation for this connection
                 raise ValueError(f"Error booking trip: {str(e)}")
-        
+
+            ReservationDB.add_reservation(trip, reservation)
+
         # Save trip to database
         TripDB.add_trip(trip)
         
