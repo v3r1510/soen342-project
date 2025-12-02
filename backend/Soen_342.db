@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS Trains (
 );
 
 CREATE TABLE IF NOT EXISTS Client (
-  client_id INTEGER PRIMARY KEY,
+  client_id TEXT PRIMARY KEY,
   name      TEXT NOT NULL,
   age       INTEGER
 );
@@ -36,13 +36,13 @@ CREATE TABLE IF NOT EXISTS Trips (
 CREATE TABLE IF NOT EXISTS Reservations (
   reservation_id INTEGER PRIMARY KEY,
   trip_id        TEXT NOT NULL REFERENCES Trips(trip_id),
-  client_id      INTEGER NOT NULL REFERENCES Client(client_id),
+  client_id      TEXT NOT NULL REFERENCES Client(client_id),
   route_id       TEXT NOT NULL REFERENCES Connections(route_id)
 );
 
 CREATE TABLE IF NOT EXISTS Tickets (
   tickets_id     INTEGER PRIMARY KEY,
   reservation_id INTEGER NOT NULL REFERENCES Reservations(reservation_id),
-  client_id      INTEGER NOT NULL REFERENCES Client(client_id),
+  client_id      TEXT NOT NULL REFERENCES Client(client_id),
   route_id       TEXT NOT NULL REFERENCES Connections(route_id)
 );
