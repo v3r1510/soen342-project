@@ -46,7 +46,7 @@ Having virtual environment in python : python -m `venv` venv
 1. Go to your backend folder: 
     `cd backend`
 2. Start the flask app:
-    `flask --run`
+    `flask run`
 
 ## Usage
 ### For Users
