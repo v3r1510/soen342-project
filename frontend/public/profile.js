@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const currentTripsContainer = document.getElementById('current-trips');
     const pastTripsContainer = document.getElementById('past-trips');
 
-    // Fetch trips from backend
+    // fetch trips from backend controller
     async function getClientTrips(clientId) {
         try {
             const response = await fetch(`http://127.0.0.1:5000/client/${clientId}/trips`);

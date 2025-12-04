@@ -1,4 +1,4 @@
-// take the selected trip data:
+// take thee selected trip data:
 const selectedTrip = JSON.parse(localStorage.getItem('selectedTrip'));
 
 if (!selectedTrip) {
@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
 
     let travellerCount = 1;
-    const maxTravellers = 4;// current requirement for use case (family of 4)
+    const maxTravellers = 4; // current requirement for use case (family of 4)
 
     const addTravellerBtn = document.getElementById('add-traveller');
     const removeTravellerBtn = document.getElementById('remove-traveller');
@@ -71,14 +71,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Initialize first traveller's age select
+
     populateAgeSelect('age-1');
 
     //form to send to backend
     bookingForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        // Get the trip date
+        // Get the trip date from the form
         const tripDate = document.getElementById('trip-date').value;
 
         if (!tripDate) {
@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Collect all traveller data
+        // Collect all traveller data from html form
         const travellers = [];
         for (let i = 1; i <= travellerCount; i++) {
             const firstName = document.getElementById(`firstName-${i}`).value;
@@ -107,7 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
             travellers.push(traveller);
         }
 
-        // Prepare booking info for backend
+        // Prepare booking info for backend (database link)
         const routeId = selectedTrip.route_id;
 
         if (!routeId) {

@@ -8,7 +8,7 @@ class Ticket:
         self.connection = connection  # Connection object
 
     def generate_ticket_id(self):
-        return f"T{random.randint(1000, 9999)}"
+        return f"TKT{random.randint(1000, 9999)}"
 
     def __str__(self):
         return f"Ticket #{self.ticket_id} for {self.client.name}"
