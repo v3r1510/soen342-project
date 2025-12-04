@@ -19,13 +19,13 @@ This is an academic project for the class SOEN342 - Software Requirements and De
 - View train connections and details
 - Book and view trips and reservations
 ### For Administrators
-- Load connections from .csv file
+- Set the name of the .csv file to be able to load connections (line 13 in controller class).
 - Manage databases
 
 ## Technologies Used
 - **Frontend**: HTML, CSS, JavaScript
 - **Backend**: Python
-- **Database**: Python Arrays
+- **Database**: SQLite
 
 ## Getting Started
 
