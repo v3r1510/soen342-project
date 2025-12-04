@@ -9,16 +9,14 @@ class Trip:
         self.connection = connection
         self.reservations = []
 
-    def add_reservation(self, client):
-        """
-        Add a reservation for a client
-        Ensures a client can only have ONE reservation per connection
-        """
+    def add_reservation(self, client, date, travel_class):  # Added travel_class parameter
         # Check if client already has a reservation for this connection
         for reservation in self.reservations:
             if reservation.client == client:
                 raise ValueError(f"Client {client.name} already has a reservation for this connection")
-        reservation = Reservation(client, self.connection)
+
+        # Create reservation with travel_class
+        reservation = Reservation(client, self.connection, date, travel_class)
         ticket = Ticket(client, self.connection)
         reservation.ticket = ticket
         self.reservations.append(reservation)
@@ -46,14 +44,7 @@ class Trip:
     def to_json(self):
         return {
             "trip_id": self.trip_id,
-            "connection": {
-                "route_id": self.connection.route_id,
-                "departure_city": self.connection.departure_city.city_name,
-                "arrival_city": self.connection.arrival_city.city_name,
-                "departure_time": self.connection.departure_time,
-                "arrival_time": self.connection.arrival_time,
-                "train_type": self.connection.train_type.train_type,
-            },
+            "connection": self.connection.to_json(),
             "reservations": [res.to_json() for res in self.reservations],
             "reservation_count": len(self.reservations),
             "tickets": [

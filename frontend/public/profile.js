@@ -8,7 +8,6 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const response = await fetch(`http://127.0.0.1:5000/client/${clientId}/trips`);
             const data = await response.json();
-
             if (data.success) {
                 return data.trips;
             } else {
@@ -28,14 +27,18 @@ document.addEventListener('DOMContentLoaded', () => {
         const pastTrips = [];
 
         trips.forEach(trip => {
-            // Assuming your backend provides a trip_date field
-            const tripDate = trip.trip_date || trip.departure_time;
-            if (tripDate < today) {
+            if (trip.date < today) {
                 pastTrips.push(trip);
             } else {
                 currentAndFutureTrips.push(trip);
             }
         });
+
+        // Sort current trips by date (earliest first)
+        currentAndFutureTrips.sort((a, b) => a.date.localeCompare(b.date));
+
+        // Sort past trips by date (most recent first)
+        pastTrips.sort((a, b) => b.date.localeCompare(a.date));
 
         return {
             current: currentAndFutureTrips,
@@ -43,34 +46,34 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
-    // displaying trip
-    function createTripHTML(booking) {
+    // displaying trip based on actual backend structure
+    function createTripHTML(trip) {
+        // Determine the price based on travel class
+        const travelClass = trip.travel_class || 'second'; // Default to second if not specified
+        const price = travelClass === 'first'
+            ? trip.connection.first_class_rate
+            : trip.connection.second_class_rate;
+
+        // Capitalize first letter for display
+        const travelClassDisplay = travelClass.charAt(0).toUpperCase() + travelClass.slice(1);
+
         return `
             <div class="trip-card">
-                <h4>${trip.departure_city} → ${trip.arrival_city}</h4>
-                <p>Trip ID: ${trip.trip_id}</p>
-                <p>Departure: ${trip.departure_time}</p>
-                <p>Arrival: ${trip.arrival_time}</p>
-                <p>Travelers: ${trip.travelers ? trip.travelers.length : 0}</p>
+                <h4>${trip.connection.departure_city} → ${trip.connection.arrival_city}</h4>
+                <p><strong>Date:</strong> ${trip.date}</p>
+                <p><strong>Ticket ID:</strong> ${trip.ticket.ticket_id}</p>
+                <p><strong>Departure:</strong> ${trip.connection.departure_time}</p>
+                <p><strong>Arrival:</strong> ${trip.connection.arrival_time}</p>
+                <p><strong>Duration:</strong> ${trip.connection.trip_time}</p>
+                <p><strong>Train Type:</strong> ${trip.connection.train_type}</p>
+                <p><strong>Days of Operation:</strong> ${trip.connection.days_of_operation}</p>
+                <p><strong>Traveler:</strong> ${trip.client.name} (Age: ${trip.client.age})</p>
+                <p><strong>Travel Class:</strong> ${travelClassDisplay} Class</p>
+                <p><strong>Price:</strong> €${price}</p>
             </div>
         `;
     }
-    //might need later so are keeping the orginial one
-    // displaying trip
- //    function createTripHTML(booking) {
- //        return `
- //            <div class="trip-card">
- //                <h4>${booking.trip.departure_city} → ${booking.trip.arrival_city}</h4>
- //                <p>Trip Date: ${booking.trip.trip_date}</p>
- //                <p>Departure: ${booking.trip.departure_time}</p>
- //                <p>Arrival: ${booking.trip.arrival_time}</p>
- //                <p>Duration: ${booking.trip.trip_time} hours</p>
- //                <p>Booking ID: ${booking.bookingId}</p>
- //                <p>Travelers: ${booking.travellers.map(t =>
- //                    `${t.firstName} ${t.lastName} (${t.class} class)`).join(', ')}</p>
- //            </div>
- //        `;
- //    }
+
     // make trips show in their corresponding containers:
     function displayTrips(sortedTrips) {
         currentTripsContainer.innerHTML = sortedTrips.current.length > 0
@@ -82,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
             : '<p>No past trips found.</p>';
     }
 
-    // hndle form submission:
+    // handle form submission:
     clientSearchForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 

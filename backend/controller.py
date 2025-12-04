@@ -1,10 +1,9 @@
 from flask import Flask, request, jsonify, Blueprint
 from models.Console import Console
 from models.ConnectionDB import ConnectionDB
-
+import json
 
 bp = Blueprint('controller', __name__, url_prefix='/')
-
 
 console = None
 
@@ -132,21 +131,34 @@ def api_book_trip():
 
         route_id = data['route_id']
         travelers = data['travelers']
+        date = data['trip_date']
 
         if not isinstance(travelers, list) or len(travelers) == 0:
             return jsonify({"error": "At least one traveler is required"}), 400
 
+        # Sanitize travel_class for each traveler
         for traveler in travelers:
             if ('name' not in traveler or
-                'age' not in traveler or
-                'client_id' not in traveler):
+                    'age' not in traveler or
+                    'client_id' not in traveler or
+                    'travel_class' not in traveler):
                 return jsonify({
-                    "error": "Each traveler must have name, age, and client_id"
+                    "error": "Each traveler must have name, age, client_id, and travel_class"
+                }), 400
+
+            # Normalize travel_class to just 'first' or 'second'
+            travel_class = traveler['travel_class'].lower().strip()
+            if 'first' in travel_class:
+                traveler['travel_class'] = 'first'
+            elif 'second' in travel_class:
+                traveler['travel_class'] = 'second'
+            else:
+                return jsonify({
+                    "error": "Each traveler must have name, age, travel class and client_id"
                 }), 400
 
         # 2) Find the Connection object for this route_id
         all_connections = ConnectionDB.get_all_connections()
-        # compare as strings to avoid int/str mismatch
         connection = next(
             (c for c in all_connections if str(c.route_id) == str(route_id)),
             None
@@ -158,9 +170,7 @@ def api_book_trip():
             }), 404
 
         # 3) Ask Console to book the trip
-        trip = console.book_trip(travelers, connection)
-
-        # Safety check to avoid NoneType.to_json crash
+        trip = console.book_trip(travelers, connection, date)
         if trip is None:
             return jsonify({
                 "error": "Internal error: trip object is None (check console.book_trip / TripDB)"
@@ -170,7 +180,6 @@ def api_book_trip():
         return jsonify({
             "success": True,
             "message": "Trip booked successfully",
-            "trip": trip.to_json()
         }), 200
 
     except ValueError as e:
@@ -219,12 +228,12 @@ def get_client_trips(client_id):
         return jsonify({"error": "System not initialized"}), 500
     
     try:
-        trips = console.find_client_trips(client_id)
+        reservations = console.find_client_reservations(client_id)
         return jsonify({
-            "success": True,
-            "trips": [trip.to_json() for trip in trips],
-            "count": len(trips)
-        })
+                "success": True,
+                "trips": [reservation.to_json() for reservation in reservations],
+                "count": len(reservations)
+            }), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 

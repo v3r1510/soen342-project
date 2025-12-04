@@ -1,4 +1,4 @@
-// take thee selected trip data:
+// take the selected trip data:
 const selectedTrip = JSON.parse(localStorage.getItem('selectedTrip'));
 
 if (!selectedTrip) {
@@ -78,6 +78,14 @@ document.addEventListener('DOMContentLoaded', () => {
     bookingForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
+        // Get the trip date
+        const tripDate = document.getElementById('trip-date').value;
+
+        if (!tripDate) {
+            alert('Please select a trip date.');
+            return;
+        }
+
         // Collect all traveller data
         const travellers = [];
         for (let i = 1; i <= travellerCount; i++) {
@@ -111,6 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const bookingPayload = {
             route_id: routeId,
+            trip_date: tripDate,
             travelers: travellers
         };
 
@@ -136,19 +145,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Booking successful
                 alert('Booking confirmed successfully!');
                 //cached trip
-                const tripDate = document.getElementById('trip-date').value;
                 const cachedBooking = {
                     trip: Object.assign({}, selectedTrip, {
                         trip_date: tripDate,
-                        trip_id: data.trip.trip_id
                     }),
                     travellers: travellers,
                     totalTravellers: travellerCount,
-                    bookingId: data.trip.trip_id,
                     timestamp: new Date().toISOString()
                 };
 
-                localStorage.setItem(`booking_${data.trip.trip_id}`, JSON.stringify(cachedBooking));
 
                 // Clear selected trip from localStorage
                 localStorage.removeItem('selectedTrip');

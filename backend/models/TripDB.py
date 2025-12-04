@@ -92,11 +92,3 @@ class TripDB:
             trips.append(trip)
         
         return trips
-
-    @staticmethod
-    def find_trips_by_client(client):
-       
-        # Note: This requires querying Reservations table
-        # For now, return empty list as Reservations need to be handled separately
-        # This will be properly implemented when ReservationDB is updated
-        return []
