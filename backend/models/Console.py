@@ -7,6 +7,7 @@ from .TrainDB import TrainDB
 from .ClientDB import ClientDB
 from .TripDB import TripDB
 from .Trip import Trip
+from .ReservationDB import ReservationDB
 
 class Console:
     def __init__(self, filename):
@@ -176,7 +177,6 @@ class Console:
             all_routes.extend(two_stop_routes)
         
         # Flatten the grouped routes back to individual segments for backward compatibility
-        
         flattened_results = []
         for route in all_routes:
             for segment in route['segments']:
@@ -371,8 +371,8 @@ class Console:
         """Convert list of routes to JSON format for frontend"""
         return [route.to_json() for route in routes_list]
 
-    def book_trip(self, travelers, connection):
-    
+    def book_trip(self, travelers, connection, date):
+
         if not isinstance(connection, Connection):
             raise TypeError("connection must be a Connection object")
         
@@ -381,7 +381,8 @@ class Console:
         
         # Create the trip for this connection
         trip = Trip(connection)
-        
+        # Save trip to database
+        TripDB.add_trip(trip)
         # Add each traveler as a reservation
         for traveler_data in travelers:
             # Get or create client
@@ -390,17 +391,18 @@ class Console:
                 age=traveler_data['age'],
                 client_id=traveler_data['client_id']
             )
-            
-            # Add reservation for this client
+            # Get the travel class from traveler data
+            travel_class = traveler_data.get('travel_class', 'second')
+
+            # Add reservation for this client with travel class
             try:
-                trip.add_reservation(client)
+                reservation = trip.add_reservation(client, date, travel_class)
             except ValueError as e:
                 # Client already has a reservation for this connection
                 raise ValueError(f"Error booking trip: {str(e)}")
-        
-        # Save trip to database
-        TripDB.add_trip(trip)
-        
+
+            ReservationDB.add_reservation(trip, reservation)
+
         return trip
 
     def get_all_clients(self):
@@ -415,9 +417,6 @@ class Console:
         """Find a specific trip by ID"""
         return TripDB.find_trip(trip_id)
 
-    def find_client_trips(self, client_id):
+    def find_client_reservations(self, client_id):
         """Find all trips for a specific client"""
-        client = ClientDB.find_client(client_id)
-        if not client:
-            return []
-        return TripDB.find_trips_by_client(client)
+        return ReservationDB.find_reservations_by_client(client_id)

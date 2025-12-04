@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
             travellerCount++;
             const newTravellerForm = createTravellerForm(travellerCount);
             travellersContainer.appendChild(newTravellerForm);
-            populateAgeSelect(`age-${travellerCount}`); // (age select for the next added traveller)
+            populateAgeSelect(`age-${travellerCount}`);
             removeTravellerBtn.disabled = false;
             if (travellerCount === maxTravellers) {
                 addTravellerBtn.disabled = true;
@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
             travellersContainer.removeChild(travellersContainer.lastChild);
             travellerCount--;
             addTravellerBtn.disabled = false;
-            
+
             if (travellerCount === 1) {
                 removeTravellerBtn.disabled = true;
             }
@@ -56,11 +56,13 @@ document.addEventListener('DOMContentLoaded', () => {
     function populateAgeSelect(selectId) {
         const ageSelect = document.getElementById(selectId);
         if (!ageSelect) return;
+
         ageSelect.innerHTML = '';
         const placeholder = document.createElement('option');
         placeholder.value = '';
         placeholder.textContent = 'Select Age';
         ageSelect.appendChild(placeholder);
+
         for (let i = 1; i <= 100; i++) {
             const option = document.createElement('option');
             option.value = i;
@@ -69,45 +71,107 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+
     populateAgeSelect('age-1');
 
-    // generate a unique ticket number and trip ID
-    function generateTicketNumber() {
-    return `TKT${Date.now()}${Math.floor(Math.random() * 1000)}`;
-    }
-
-    // to confirm booking, save booking data to localStorage to be able to view in My Trips:
-    bookingForm.addEventListener('submit', (e) => {
+    //form to send to backend
+    bookingForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const travellers = [];
 
+        // Get the trip date from the form
+        const tripDate = document.getElementById('trip-date').value;
+
+        if (!tripDate) {
+            alert('Please select a trip date.');
+            return;
+        }
+
+        // Collect all traveller data from html form
+        const travellers = [];
         for (let i = 1; i <= travellerCount; i++) {
+            const firstName = document.getElementById(`firstName-${i}`).value;
+            const lastName = document.getElementById(`lastName-${i}`).value;
+            const age = parseInt(document.getElementById(`age-${i}`).value);
+            const officialId = document.getElementById(`officialid-${i}`).value;
+            const travelClass = document.getElementById(`class-${i}`).value;
+
             const traveller = {
-                firstName: document.getElementById(`firstName-${i}`).value,
-                lastName: document.getElementById(`lastName-${i}`).value,
-                age: document.getElementById(`age-${i}`).value,
-                officialId: document.getElementById(`officialid-${i}`).value,
-                class: document.getElementById(`class-${i}`).value,
-                ticketNumber: generateTicketNumber(),
+                name: `${firstName} ${lastName}`,
+                age: age,
+                client_id: officialId,
+                travel_class: travelClass,
+                // Store additional details for frontend use
+                firstName: firstName,
+                lastName: lastName
             };
             travellers.push(traveller);
         }
 
-        const bookingData = {
-            trip: Object.assign({}, selectedTrip, {
-                // store only the travel date as a string (YYYY-MM-DD)
-                trip_date: document.getElementById('trip-date').value
-            }),
-            travellers: travellers,
-            totalTravellers: travellerCount,
-            bookingId: generateTicketNumber()
+        // Prepare booking info for backend (database link)
+        const routeId = selectedTrip.route_id;
+
+        if (!routeId) {
+            console.error('Selected trip object:', selectedTrip);
+            alert('Error: Route ID is missing. Please select a trip again.');
+            window.location.href = 'index.html';
+            return;
+        }
+
+        const bookingPayload = {
+            route_id: routeId,
+            trip_date: tripDate,
+            travelers: travellers
         };
 
-        //unique key to store booking:
-        const bookingKey = `booking_${bookingData.bookingId}`;
-        localStorage.setItem(bookingKey, JSON.stringify(bookingData));
+        // Show loading state
+        const submitBtn = bookingForm.querySelector('button[type="submit"]');
+        const originalBtnText = submitBtn.textContent;
+        submitBtn.textContent = 'Booking...';
+        submitBtn.disabled = true;
 
-        window.location.href = 'profile.html';
+        try {
+            // Send booking request to backend
+            const response = await fetch('http://127.0.0.1:5000/book-trip', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(bookingPayload)
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.success) {
+                // Booking successful
+                alert('Booking confirmed successfully!');
+                //cached trip
+                const cachedBooking = {
+                    trip: Object.assign({}, selectedTrip, {
+                        trip_date: tripDate,
+                    }),
+                    travellers: travellers,
+                    totalTravellers: travellerCount,
+                    timestamp: new Date().toISOString()
+                };
+
+
+                // Clear selected trip from localStorage
+                localStorage.removeItem('selectedTrip');
+
+                // Redirect to profile page
+                window.location.href = 'profile.html';
+            } else {
+                // Booking failed
+                throw new Error(data.error || 'Booking failed');
+            }
+        } catch (error) {
+            console.error('Booking error:', error);
+            alert(`Failed to complete booking: ${error.message}\nPlease try again.`);
+
+            // Restore button state
+            submitBtn.textContent = originalBtnText;
+            submitBtn.disabled = false;
+        }
     });
 });
 
@@ -121,14 +185,18 @@ function createTravellerForm(travellerId) {
         <h3>Traveller ${travellerId}</h3>
         <label for="firstName-${travellerId}">First Name:</label>
         <input type="text" id="firstName-${travellerId}" name="firstName-${travellerId}" required>
+
         <label for="lastName-${travellerId}">Last Name:</label>
         <input type="text" id="lastName-${travellerId}" name="lastName-${travellerId}" required>
+
         <label for="age-${travellerId}">Age:</label>
         <select id="age-${travellerId}" name="age-${travellerId}" required>
             <option value="">Select Age</option>
         </select>
+
         <label for="officialid-${travellerId}">Official ID:</label>
         <input type="text" id="officialid-${travellerId}" name="officialid-${travellerId}" required>
+
         <label for="class-${travellerId}">Travel Class:</label>
         <select id="class-${travellerId}" name="class-${travellerId}" required>
             <option value="">Select Class</option>

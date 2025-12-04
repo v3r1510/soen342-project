@@ -3,80 +3,80 @@ document.addEventListener('DOMContentLoaded', () => {
     const currentTripsContainer = document.getElementById('current-trips');
     const pastTripsContainer = document.getElementById('past-trips');
 
-    // loading bookings from local Storage:
-    function getAllBookings() {
-        const bookings = [];
-        for (let i = 0; i < localStorage.length; i++) {
-            const key = localStorage.key(i);
-            if (key.startsWith('booking_')) {
-                try {
-                    const booking = JSON.parse(localStorage.getItem(key));
-                    bookings.push(booking);
-                } catch (e) {
-                    console.error('Error parsing booking:', e);
-                }
+    // fetch trips from backend controller
+    async function getClientTrips(clientId) {
+        try {
+            const response = await fetch(`http://127.0.0.1:5000/client/${clientId}/trips`);
+            const data = await response.json();
+            if (data.success) {
+                return data.trips;
+            } else {
+                console.error('Error fetching trips:', data.error);
+                return [];
             }
+        } catch (error) {
+            console.error('Failed to fetch trips:', error);
+            return [];
         }
-        return bookings;
     }
 
-    // filtering trips by client last name and ID
-    function filterTripsByClient(bookings, lastName, clientId) {
-        return bookings.filter(booking => 
-            booking.travellers.some(traveller => 
-                traveller.lastName.toLowerCase() === lastName.toLowerCase() &&
-                traveller.officialId === clientId
-            )
-        );
-    }
-
-    // sorting trips by current/future and past (with YYYY-MM-DD format strings in Eastern time):
-    function sortTrips(bookings) {
-        function getDateStrInTimeZone(timeZone) {
-            const now = new Date();
-            const parts = new Intl.DateTimeFormat('en-US', { timeZone, year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(now);
-            const year = parts.find(p => p.type === 'year').value;
-            const month = parts.find(p => p.type === 'month').value;
-            const day = parts.find(p => p.type === 'day').value;
-            return `${year}-${month}-${day}`;
-        }
-        const todayStr = getDateStrInTimeZone('America/New_York');
+    // Sort trips by date
+    function sortTrips(trips) {
+        const today = new Date().toISOString().split('T')[0];
         const currentAndFutureTrips = [];
         const pastTrips = [];
-        bookings.forEach(booking => {
-            const td = booking.trip && booking.trip.trip_date ? booking.trip.trip_date : null;
-            if (td < todayStr) {
-                pastTrips.push(booking);
+
+        trips.forEach(trip => {
+            if (trip.date < today) {
+                pastTrips.push(trip);
             } else {
-                currentAndFutureTrips.push(booking);
+                currentAndFutureTrips.push(trip);
             }
         });
 
+        // Sort current trips by date (earliest first)
+        currentAndFutureTrips.sort((a, b) => a.date.localeCompare(b.date));
+
+        // Sort past trips by date (most recent first)
+        pastTrips.sort((a, b) => b.date.localeCompare(a.date));
+
         return {
-            current: currentAndFutureTrips.sort((a, b) => 0),
-            past: pastTrips.sort((a, b) => 0)
+            current: currentAndFutureTrips,
+            past: pastTrips
         };
     }
 
-    // displaying trip
-    function createTripHTML(booking) {
+    // displaying trip based on actual backend structure
+    function createTripHTML(trip) {
+        // Determine the price based on travel class
+        const travelClass = trip.travel_class || 'second'; // Default to second if not specified
+        const price = travelClass === 'first'
+            ? trip.connection.first_class_rate
+            : trip.connection.second_class_rate;
+
+        // Capitalize first letter for display
+        const travelClassDisplay = travelClass.charAt(0).toUpperCase() + travelClass.slice(1);
+
         return `
             <div class="trip-card">
-                <h4>${booking.trip.departure_city} → ${booking.trip.arrival_city}</h4>
-                <p>Trip Date: ${booking.trip.trip_date}</p>
-                <p>Departure: ${booking.trip.departure_time}</p>
-                <p>Arrival: ${booking.trip.arrival_time}</p>
-                <p>Duration: ${booking.trip.trip_time} hours</p>
-                <p>Booking ID: ${booking.bookingId}</p>
-                <p>Travelers: ${booking.travellers.map(t => 
-                    `${t.firstName} ${t.lastName} (${t.class} class)`).join(', ')}</p>
+                <h4>${trip.connection.departure_city} → ${trip.connection.arrival_city}</h4>
+                <p><strong>Date:</strong> ${trip.date}</p>
+                <p><strong>Ticket ID:</strong> ${trip.ticket.ticket_id}</p>
+                <p><strong>Departure:</strong> ${trip.connection.departure_time}</p>
+                <p><strong>Arrival:</strong> ${trip.connection.arrival_time}</p>
+                <p><strong>Duration:</strong> ${trip.connection.trip_time}</p>
+                <p><strong>Train Type:</strong> ${trip.connection.train_type}</p>
+                <p><strong>Days of Operation:</strong> ${trip.connection.days_of_operation}</p>
+                <p><strong>Traveler:</strong> ${trip.client.name} (Age: ${trip.client.age})</p>
+                <p><strong>Travel Class:</strong> ${travelClassDisplay} Class</p>
+                <p><strong>Price:</strong> €${price}</p>
             </div>
         `;
     }
 
     // make trips show in their corresponding containers:
     function displayTrips(sortedTrips) {
-        currentTripsContainer.innerHTML = sortedTrips.current.length > 0 
+        currentTripsContainer.innerHTML = sortedTrips.current.length > 0
             ? sortedTrips.current.map(createTripHTML).join('')
             : '<p>No current or upcoming trips found.</p>';
 
@@ -85,17 +85,14 @@ document.addEventListener('DOMContentLoaded', () => {
             : '<p>No past trips found.</p>';
     }
 
-    // hndle form submission:
-    clientSearchForm.addEventListener('submit', (e) => {
+    // handle form submission:
+    clientSearchForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        
-        const lastName = document.getElementById('client-lastname').value;
-        const clientId = document.getElementById('client-id').value;
 
-        const allBookings = getAllBookings();
-        const clientBookings = filterTripsByClient(allBookings, lastName, clientId);
-        const sortedTrips = sortTrips(clientBookings);
-        
+        const clientId = document.getElementById('client-id').value;
+        const trips = await getClientTrips(clientId);
+        const sortedTrips = sortTrips(trips);
+
         displayTrips(sortedTrips);
     });
 });

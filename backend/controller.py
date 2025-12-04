@@ -1,15 +1,16 @@
 from flask import Flask, request, jsonify, Blueprint
 from models.Console import Console
+from models.ConnectionDB import ConnectionDB
+import json
 
 bp = Blueprint('controller', __name__, url_prefix='/')
-
 
 console = None
 
 def initialize_console(filename):
-    global console
+    global console  #console object that can be used anywhere in teh code
     console = Console(filename)
-initialize_console("eu_rail_network.csv") 
+initialize_console("eu_rail_network.csv") #file where the connections are loaded from
 
 @bp.route('/search', methods=['POST', 'GET'])
 def search_routes():
@@ -59,6 +60,7 @@ def search_routes():
         print(f"Found {len(results)} matching routes")
         # Convert to JSON format
         routes_json = console.routes_to_json(results)
+        #sends back the searched routes
         return jsonify({
             "success": True,
             "routes": routes_json,
@@ -68,127 +70,74 @@ def search_routes():
     except Exception as e:
         return jsonify({"error (this is a big error)": str(e)}), 500
 
-@bp.route('/routes', methods=['GET'])
-def get_all_routes():
-    """Get all available routes"""
-    if not console:
-        return jsonify({"error": "System not initialized"}), 500
-    
-    try:
-        routes = console.get_all_routes()
-        routes_json = console.routes_to_json(routes)
-        
-        return jsonify({
-            "success": True,
-            "routes": routes_json,
-            "count": len(routes_json)
-        })
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-@bp.route('/cities', methods=['GET'])
-def get_cities():
-    """Get all available cities"""
-    if not console:
-        return jsonify({"error": "System not initialized"}), 500
-    
-    try:
-        cities = console.get_all_cities()
-        return jsonify({
-            "success": True,
-            "cities": cities
-        })
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-@bp.route('/train-types', methods=['GET'])
-def get_train_types():
-    """Get all available train types"""
-    if not console:
-        return jsonify({"error": "System not initialized"}), 500
-    
-    try:
-        train_types = console.get_all_train_types()
-        return jsonify({
-            "success": True,
-            "train_types": train_types
-        })
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
 
 @bp.route('/book-trip', methods=['POST'])
-def book_trip():
-    """
-    Book a trip for one or more travelers
-    
-    Expected JSON format:
-    {
-        "route_id": "R001",
-        "travelers": [
-            {"name": "John Doe", "age": 35, "client_id": "ID123456"},
-            {"name": "Jane Doe", "age": 33, "client_id": "ID789012"}
-        ]
-    }
-    """
+def api_book_trip():
     if not console:
         return jsonify({"error": "System not initialized"}), 500
-    
+
     try:
         data = request.get_json()
-        
 
+        # basic payload validation
         if 'route_id' not in data or 'travelers' not in data:
             return jsonify({"error": "Missing required fields: route_id and travelers"}), 400
-        
+
         route_id = data['route_id']
         travelers = data['travelers']
-        
- 
+        date = data['trip_date']
+
         if not isinstance(travelers, list) or len(travelers) == 0:
             return jsonify({"error": "At least one traveler is required"}), 400
-        
+
+        # sanitize travel_class for each traveler
         for traveler in travelers:
-            if 'name' not in traveler or 'age' not in traveler or 'client_id' not in traveler:
-                return jsonify({"error": "Each traveler must have name, age, and client_id"}), 400
-        
-  
-        from models.ConnectionDB import connections
-        connection = None
-        for conn in connections:
-            if conn.route_id == route_id:
-                connection = conn
-                break
-        
+            if ('name' not in traveler or
+                    'age' not in traveler or
+                    'client_id' not in traveler or
+                    'travel_class' not in traveler):
+                return jsonify({
+                    "error": "Each traveler must have name, age, client_id, and travel_class"
+                }), 400
+
+            # keep just 'first' or 'second' for the travel class
+            travel_class = traveler['travel_class'].lower().strip()
+            if 'first' in travel_class:
+                traveler['travel_class'] = 'first'
+            elif 'second' in travel_class:
+                traveler['travel_class'] = 'second'
+            else:
+                return jsonify({
+                    "error": "Each traveler must have name, age, travel class and client_id"
+                }), 400
+
+        # find the Connection object for this route_id
+        all_connections = ConnectionDB.get_all_connections()
+        connection = next(
+            (c for c in all_connections if str(c.route_id) == str(route_id)),
+            None
+        )
+
         if not connection:
-            return jsonify({"error": f"Connection with route_id {route_id} not found"}), 404
-        
-  
-        trip = console.book_trip(travelers, connection)
-        
+            return jsonify({
+                "error": f"Connection with route_id {route_id} not found"
+            }), 404
+
+        # ask Console to book the trip
+        trip = console.book_trip(travelers, connection, date)
+        if trip is None:
+            return jsonify({
+                "error": "Internal error: trip object is None (check console.book_trip / TripDB)"
+            }), 500
+
+        #success, returns the fact that the booking has been succesfully done
         return jsonify({
             "success": True,
             "message": "Trip booked successfully",
-            "trip": trip.to_json()
-        })
-        
+        }), 200
+
     except ValueError as e:
         return jsonify({"error": str(e)}), 400
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-@bp.route('/trips', methods=['GET'])
-def get_all_trips():
-    """Get all booked trips"""
-    if not console:
-        return jsonify({"error": "System not initialized"}), 500
-    
-    try:
-        trips = console.get_all_trips()
-        return jsonify({
-            "success": True,
-            "trips": [trip.to_json() for trip in trips],
-            "count": len(trips)
-        })
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -217,12 +166,13 @@ def get_client_trips(client_id):
         return jsonify({"error": "System not initialized"}), 500
     
     try:
-        trips = console.find_client_trips(client_id)
+        reservations = console.find_client_reservations(client_id)
+        #sends back the trips information and reservation information
         return jsonify({
-            "success": True,
-            "trips": [trip.to_json() for trip in trips],
-            "count": len(trips)
-        })
+                "success": True,
+                "trips": [reservation.to_json() for reservation in reservations],
+                "count": len(reservations)
+            }), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 

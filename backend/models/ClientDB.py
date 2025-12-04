@@ -4,19 +4,15 @@ from .Database import Database
 class ClientDB:
     @staticmethod
     def add_client(name, age, client_id):
-    
-        # Check if client already exists
         existing_client = ClientDB.find_client(client_id)
         if existing_client:
             return existing_client
-        
-        # Create new client
+
+        age = int(age)
         query = "INSERT INTO Client (client_id, name, age) VALUES (?, ?, ?)"
-        result = Database.execute_query(query, (client_id, name, age))
-        
-        if result is not None:
-            return Client(name, age, client_id)
-        return None
+        Database.execute_query(query, (client_id, name, age))
+
+        return Client(name, age, client_id)
 
     @staticmethod
     def find_client(client_id):
