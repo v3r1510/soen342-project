@@ -9,6 +9,7 @@
 - [Project Structure](#project-structure)
 - [Contributing](#contributing)
 - [Team](#team)
+- [DEMO](#demo)
 
 ## Overview
 This is an academic project for the class SOEN342 - Software Requirements and Deployment, taught by  Constantinos Constantinides in Fall 2025. The Railway Network System is a web application allowing users to book their train trips accross Europe - they can search for train connections and book them.
