@@ -2,7 +2,7 @@
 const selectedTrip = JSON.parse(localStorage.getItem('selectedTrip'));
 
 if (!selectedTrip) {
-    alert('No trip selected. Redirecting to search...');
+    // alert('No trip selected. Redirecting to search...');
     window.location.href = 'index.html';
 }
 
