@@ -118,3 +118,6 @@ git push origin feature/issue-number-description
 | [Valeria Rosca]    | Project Lead, Frontend | [v3r1510]          | 40297230  |
 | [Karan Kumar]      | Backend                | [zekaran30]        | 40277342  |
 | [Mohammed Janoudi] | Backend                | [Mohammed-Janoudi] | 40252594  |
+
+## DEMO
+The recorder Demo video is located in the Releases of this repo. 
